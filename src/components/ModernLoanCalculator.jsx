@@ -102,7 +102,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
       let effectiveTenor = tenorYears;
       if (!tenorElement || (tenorElement.value || '').toString().trim() === '') effectiveTenor = 1;
 
-      // If user selected Employed only, use DBR=50% and employed-specific formula per backend
+      // If user selected Employed only, use DBR=60% and employed-specific formula per backend
       let estimatedLoan = 0;
       let roundedMonthly = 0;
       let breakdownHtml = '';
@@ -114,7 +114,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
       let appliedInterestRate = 5.75; // percent
       if (incomeSource === 'employed') {
         const netMonthlyIncome = salary;
-        const dbrCap = netMonthlyIncome * 0.50; // 50% DBR for employed
+        const dbrCap = netMonthlyIncome * 0.60; // 60% DBR for employed
         const availableEMI = dbrCap - obligations;
         totalAvailable = dbrCap + rental; // for employed, total available is DBR cap (rental should be 0)
 
@@ -126,7 +126,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
           // Does not qualify
           estimatedLoan = 0;
           if (loanAmountSpan) loanAmountSpan.innerText = formatKES(0);
-          const salaryDesc = `Salary (DBR 50%): ${formatKES(Math.round(netMonthlyIncome * 0.50))}`;
+          const salaryDesc = `Salary (DBR 60%): ${formatKES(Math.round(netMonthlyIncome * 0.60))}`;
           const obligationsDesc = `Existing debts: -${formatKES(obligations)}`;
           const deficit = Math.abs(Math.round(availableEMI));
           breakdownHtml = `${salaryDesc}<br>${obligationsDesc}<br>Deficit: ${formatKES(deficit)} → <strong>Does not qualify</strong>`;
@@ -152,7 +152,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
 
           if (loanAmountSpan) loanAmountSpan.innerText = formatKES(estimatedLoan);
 
-          const salaryDesc = `Salary (DBR 50%): ${formatKES(Math.round(dbrCap))}`;
+          const salaryDesc = `Salary (DBR 60%): ${formatKES(Math.round(dbrCap))}`;
           const obligationsDesc = `Existing debts: -${formatKES(obligations)}`;
           const rentDesc = rental ? `Rent credit: +${formatKES(rental)}` : '';
           const totalDesc = `Available EMI: ${formatKES(Math.round(availableEMI))}`;
@@ -921,15 +921,15 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
 
               <hr />
 
-              {/* {incomeSource !== 'employed' && (
+              {incomeSource !== 'employed' && (
                 <div className="input-section">
                   <div className="label-row">
-                    <span className="field-label">🏠 Current Monthly Rental Payments</span>
-                    <span className="badge-hint">Can contribute to affordability</span>
+                    <span className="field-label">🏠 Credit cards limits</span>
+                    {/* <span className="badge-hint">Can contribute to affordability</span> */}
                   </div>
                   <input type="number" id="rentalPayment" className="input-field" placeholder="e.g., 1200" step="50" autoComplete="off" />
                 </div>
-              )} */}
+              )}
               {/* Credit card and overdraft limits removed per UI requirements; treat as part of existing obligations */}
 
               <div className="input-section">
