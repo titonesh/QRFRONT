@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/* Custom properties for theming */
+@layer base {
+  :root {
+    --admin-bg-overlay: color-mix(in srgb, black 65%, transparent);
+    --admin-border-subtle: color-mix(in srgb, white 3%, transparent);
+    --admin-shadow-heavy: 0 30px 40px -20px color-mix(in srgb, black 50%, transparent);
+  }
+}
+
+/* Scoped admin login - more efficient selectors */
+.admin-login {
+  & .form-panel {
+    background: var(--admin-bg-overlay);
+    border-left: 1px solid var(--admin-border-subtle);
+    box-shadow: -10px 0 30px var(--admin-shadow-heavy);
+    max-width: 540px;
+    padding-block: 18px;
+    padding-inline: 32px;
+    
+    /* Better form spacing */
+    & form > div {
+      margin-bottom: 18px;
+    }
+    
+    & label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+  }
+  
+  /* Unified input styling */
+  input[type="text"],
+  input[type="password"],
+  input[placeholder] {
+    font-size: 14px;
+    width: 100%;
+    
+    &:focus {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+    }
+  }
+  
+  /* Typography refinement */
+  .text-3xl {
+    font-size: 28px;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Responsive improvements */
+@media (min-width: 1024px) {
+  .admin-login .absolute[style] {
+    filter: brightness(0.35) contrast(0.9);
+    transition: filter 0.3s ease;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .admin-login .absolute[style] {
+    transition: none;
+  }
+}

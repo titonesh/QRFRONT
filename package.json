@@ -1,0 +1,29 @@
+{
+  "name": "mortgage-loan-app",
+  "version": "1.0.0",
+  "description": "Mortgage Loan Prequalification System",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.6.0",
+    "react-router-dom": "^6.20.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "tailwindcss": "^4.2.2",
+    "vite": "^5.0.0"
+  }
+}
