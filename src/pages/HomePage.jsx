@@ -68,7 +68,7 @@ export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
   return (
     <div className="min-h-screen w-full bg-stone-50 text-slate-900">
       <section className="w-full border-b border-black/5 bg-[linear-gradient(180deg,#fafaf9_0%,#f4f4f2_100%)]">
-        <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-12">
+        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
           <div className="rounded-4xl border border-black/8 bg-white px-6 py-8 shadow-[0_24px_45px_-35px_rgba(15,23,42,0.28)] sm:px-8 sm:py-10 lg:px-10">
             <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
               Mortgage Prequalification
@@ -113,40 +113,6 @@ export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
               <p className="mt-2 text-sm leading-6 text-slate-600">
                 A guided flow with quieter typography, generous spacing, rounded form surfaces, and structured content that feels credible from the first screen.
               </p>
-            </div>
-          </div>
-
-          <div className="rounded-4xl border border-black/8 bg-white p-5 shadow-[0_24px_45px_-35px_rgba(15,23,42,0.24)] sm:p-6 lg:p-7">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Customer View</p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-slate-900">Form-style entry experience</h2>
-              </div>
-              <span className="rounded-full border border-slate-200 bg-stone-50 px-3 py-1 text-xs font-medium text-slate-600">
-                Neutral UI
-              </span>
-            </div>
-
-            <div className="mt-5 space-y-4">
-              {formPreview.map((field) => (
-                <div key={field.label} className="rounded-2xl border border-slate-200 bg-[#fbfbfa] px-4 py-4 sm:px-5 sm:py-5">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{field.label}</p>
-                  <div className="mt-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]">
-                    {field.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-slate-200 bg-stone-50 px-4 py-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Visual Direction</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">Rounded fields, soft borders, clear labels, and balanced spacing.</p>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-stone-50 px-4 py-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Customer Benefit</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">The page feels organized and premium without relying on strong color accents.</p>
-              </div>
             </div>
           </div>
         </div>

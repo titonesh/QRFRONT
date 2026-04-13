@@ -4,15 +4,14 @@ import Button from '../components/Button';
 
 /**
  * QR Code Page Component
- * Generates and displays a QR code for the mortgage prequalification landing page
+ * Generates and displays a QR code for the mortgage calculator entry page
  */
 export const QRCodePage = ({ onNavigateToHome }) => {
   const canvasRef = useRef();
   const [qrGenerated, setQrGenerated] = useState(false);
 
-  // The URL that will be encoded in the QR code
-  // For development, use localhost; for production, use your domain
-  const QR_URL = import.meta.env.VITE_QR_URL || 'http://localhost:3001';
+  // The URL encoded in the QR code should deep-link into the calculator flow.
+  const QR_URL = import.meta.env.VITE_QR_URL || 'http://localhost:3001/#calculator';
 
   // Generate QR code on mount
   useEffect(() => {
@@ -136,7 +135,7 @@ export const QRCodePage = ({ onNavigateToHome }) => {
                   }}
                 />
                 {!qrGenerated && (
-                  <div className="w-[300px] h-[300px] flex items-center justify-center bg-neutral-light rounded">
+                  <div className="w-75 h-75 flex items-center justify-center bg-neutral-light rounded">
                     <p className="text-gray-600">Generating QR Code...</p>
                   </div>
                 )}

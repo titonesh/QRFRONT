@@ -10,6 +10,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
   const [loanResultId, setLoanResultId] = useState(null);
   const [loanResponse, setLoanResponse] = useState(null);
   const [loanInputs, setLoanInputs] = useState(null);
+  const isStandardMortgage = selectedProduct?.id === 'standard';
 
   const parseFormattedNumber = (value) => {
     const normalized = (value || '').toString().replace(/,/g, '').trim();
@@ -410,6 +411,12 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
     window.addEventListener('loanCalcCalculated', handler);
     return () => window.removeEventListener('loanCalcCalculated', handler);
   }, []);
+
+  useEffect(() => {
+    if (isStandardMortgage && incomeSource !== 'employed') {
+      setIncomeSource('employed');
+    }
+  }, [isStandardMortgage, incomeSource]);
 
   // Attempt to open callback modal; ensure there's a persisted LoanResultId first
   async function handleOpenCallback() {
@@ -884,7 +891,11 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
 
         <div className="income-source-copy">
           <p>Borrower Sector</p>
-          <p>Select the income segment to continue with the existing affordability flow.</p>
+          <p>
+            {isStandardMortgage
+              ? 'Standard Mortgage is available for employed applicants only.'
+              : 'Select the income segment to continue with the existing affordability flow.'}
+          </p>
         </div>
 
         <div className="form-grid">
@@ -894,7 +905,9 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
               <div className="input-section">
                 <div className="income-source" role="radiogroup" aria-label="Source of income">
                   <label><input type="radio" name="incomeSource" value="employed" checked={incomeSource==='employed'} onChange={() => setIncomeSource('employed')} /> Employed</label>
-                  <label><input type="radio" name="incomeSource" value="business" checked={incomeSource==='business'} onChange={() => setIncomeSource('business')} /> Business</label>
+                  {!isStandardMortgage && (
+                    <label><input type="radio" name="incomeSource" value="business" checked={incomeSource==='business'} onChange={() => setIncomeSource('business')} /> Business</label>
+                  )}
                 </div>
 
                   {incomeSource === 'employed' && (
@@ -924,7 +937,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
               {incomeSource !== 'employed' && (
                 <div className="input-section">
                   <div className="label-row">
-                    <span className="field-label">🏠 Credit cards limits</span>
+                    <span className="field-label">💳 Credit cards limits</span>
                     {/* <span className="badge-hint">Can contribute to affordability</span> */}
                   </div>
                   <input type="number" id="rentalPayment" className="input-field" placeholder="e.g., 1200" step="50" autoComplete="off" />

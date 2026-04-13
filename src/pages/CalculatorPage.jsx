@@ -285,19 +285,18 @@ const MORTGAGE_PRODUCTS = [
     label: 'Affordable Housing Mortgage (AHF)',
     shortLabel: 'AHF',
     image: '/assets/AHF.png',
-    // Balanced descriptions to ensure card symmetry
-    description: 'Access government-backed housing schemes with flexible repayment terms.',
-    audience: 'Affordable housing option',
-    highlights: ['Product-specific rules apply']
+    description: '9.5% rate for 20 years financing.',
+    audience: '9.9% rate for 25 years financing.',
+    highlights: []
   },
   {
     id: 'standard',
     label: 'Standard Mortgage',
     shortLabel: 'Standard Mortgage',
     image: '/assets/standard%20mortgage.png',
-    description: 'Traditional financing for residential properties with competitive market rates.',
-    audience: 'Standard mortgage option',
-    highlights: ['Ready for future rules']
+    description: 'Get a mortgage with competitive rates and flexible terms.',
+    audience: '14.02% rate for 25 years financing.',
+    highlights: ['']
   }
 ];
 
@@ -367,7 +366,7 @@ export const CalculatorPage = ({ onBackHome }) => {
               <div className="flex justify-center w-full">
                 <div className="w-full max-w-5xl">
                   {!selectedProduct ? (
-                    <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
+                    <div className="overflow-hidden rounded-4xl border border-slate-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
                       <div className="border-b border-slate-100 bg-slate-50/50 px-8 py-10">
                         <div className="max-w-2xl text-center mx-auto">
                           <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Select mortgage product</h2>
@@ -383,7 +382,7 @@ export const CalculatorPage = ({ onBackHome }) => {
                             key={product.id}
                             type="button"
                             onClick={() => setSelectedProduct(product)}
-                            className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white text-left transition-all duration-300 hover:border-primary hover:shadow-xl hover:-translate-y-1 focus:ring-2 focus:ring-primary focus:ring-offset-4"
+                            className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white text-left transition-all duration-300 hover:border-primary hover:shadow-xl hover:-translate-y-1 focus:ring-2 focus:ring-primary focus:ring-offset-4"
                           >
                             {/* Image Section - Darker gradient for better text contrast */}
                             <div className="relative h-60 overflow-hidden bg-slate-100">
@@ -392,7 +391,7 @@ export const CalculatorPage = ({ onBackHome }) => {
                                 alt={product.label}
                                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-90" />
+                              <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-transparent to-transparent opacity-90" />
                               <div className="absolute inset-x-0 bottom-0 px-6 pb-5">
                                 <div className="inline-flex items-center rounded-md bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-800 shadow-sm">
                                   {product.shortLabel}
