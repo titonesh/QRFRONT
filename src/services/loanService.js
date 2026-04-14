@@ -20,15 +20,17 @@ export const loanService = {
       const eo = Number.parseFloat(loanData.existingLoanObligations);
       const tenorRaw = parseInt(loanData.preferredLoanTenorYears, 10);
 
+      const cc = Number.parseFloat(loanData.creditCardLimit);
+      const od = Number.parseFloat(loanData.overdraftLimit);
       const payload = {
-        productType: loanData.productType || null,
         monthlySalaryIncome: isNaN(ms) ? 0 : Math.max(0, ms),
         monthlyBusinessIncome: isNaN(mb) ? 0 : Math.max(0, mb),
         monthlyRentalPayments: isNaN(mr) ? 0 : Math.max(0, mr),
         existingLoanObligations: isNaN(eo) ? 0 : Math.max(0, eo),
-        // Card/OD utilisation captured in `existingLoanObligations` on UI; send zero here
-        creditCardLimit: 0,
-        overdraftLimit: 0,
+        creditCardLimit: isNaN(cc) ? 0 : Math.max(0, cc),
+        overdraftLimit: isNaN(od) ? 0 : Math.max(0, od),
+        productType: loanData.productType || loanData.ProductType || 'affordableHousing',
+        incomeSourceType: loanData.incomeSourceType || loanData.IncomeSourceType || 'employed',
         // Default tenor to 1 year when missing or invalid
         preferredLoanTenorYears: isNaN(tenorRaw) ? 1 : Math.max(1, tenorRaw),
       };

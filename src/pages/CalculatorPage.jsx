@@ -439,6 +439,7 @@ export const CalculatorPage = ({ onBackHome }) => {
                     <ModernLoanCalculator
                       selectedProduct={selectedProduct}
                       onChangeProduct={() => setSelectedProduct(null)}
+                      onBackHome={onBackHome}
                     />
                   )}
                 </div>

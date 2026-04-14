@@ -1,144 +1,327 @@
-import Button from '../components/Button';
-import Accordion from '../components/Accordion';
+import React, { useState } from 'react';
+import { 
+  Menu, 
+  X, 
+  ArrowRight, 
+  ChevronDown
+} from 'lucide-react';
+import NCBALogo from '../assets/images/logoIcon.png';
 
-/**
- * Home/Landing Page Component
- * QR code landing page entry point
- */
-export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
-  const trustHighlights = [
-    {
-      title: 'Structured Assessment',
-      description: 'A guided flow that collects the right borrower details in a clear order.'
-    },
-    {
-      title: 'Transparent Output',
-      description: 'Customers see the same assumptions and affordability breakdown used in the calculator.'
-    },
-    {
-      title: 'Customer Ready',
-      description: 'Designed to feel credible, simple, and polished on both desktop and mobile.'
+export const HomePage = ({ onNavigateToCalculator }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
+  const pageShell = 'mx-auto w-full max-w-350';
+
+  // Smooth Scroll Helper
+  const scrollToSection = (e, id) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 80; // Account for fixed header
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
-  ];
+    setMobileMenuOpen(false);
+  };
 
   const processSteps = [
     {
-      step: '01',
-      title: 'Choose a product path',
-      description: 'Start with the mortgage type that best matches the customer journey.'
+      number: '01',
+      title: 'Register Account',
+      description: 'Create your account and provide basic information to get started with your mortgage journey.'
     },
     {
-      step: '02',
-      title: 'Enter borrower details',
-      description: 'Provide income, obligations, and preferred tenor using a clear structured form.'
+      number: '02',
+      title: 'Complete Financial Profile',
+      description: 'Fill in your income, obligations, and property preferences for accurate assessment.'
     },
     {
-      step: '03',
-      title: 'Review affordability',
-      description: 'See the qualifying amount, repayment estimate, and the key assumptions applied.'
+      number: '03',
+      title: 'Get Instant Prequalification',
+      description: 'Receive immediate affordability assessment and explore mortgage options that suit your needs.'
     }
-  ];
-
-  const formPreview = [
-    { label: 'Borrower sector', value: 'Employed or Business' },
-    { label: 'Income input', value: 'Formatted values, e.g. 100,000' },
-    { label: 'Obligations', value: 'Loans, cards, and monthly commitments' },
-    { label: 'Outcome', value: 'Instant affordability assessment' }
   ];
 
   const faqs = [
     {
-      question: "What is prequalification?",
+      question: "What is mortgage prequalification?",
       answer: "Prequalification is a preliminary assessment of your loan eligibility based on your financial information. It's quick, non-binding, and gives you an estimate of how much you can borrow."
     },
     {
-      question: "How long does the process take?",
-      answer: "The prequalification process takes just 5-10 minutes. Simply fill in your financial information and get instant results."
+      question: "How does the prequalification process work?",
+      answer: "Simply fill in your financial information including income, existing obligations, and preferred loan tenor. Our system instantly calculates your affordability."
     },
     {
       question: "Is my information secure?",
-      answer: "Yes, we use industry-standard encryption and follow all data protection regulations. Your information is never shared without your consent."
-    },
-    {
-      question: "What's the difference between prequalification and approval?",
-      answer: "Prequalification is an estimate. Approval requires full documentation, credit checks, and property appraisal. Final terms may vary."
+      answer: "Yes, we use NCBA-grade bank-level encryption, multi-factor authentication, and comply with all financial industry security standards."
     }
   ];
 
+  // Spacer Component
+  const SectionSpacer = () => (
+    <div className="h-4 w-full sm:h-5 lg:h-6" aria-hidden="true"></div>
+  );
+
   return (
-    <div className="min-h-screen w-full bg-stone-50 text-slate-900">
-      <section className="w-full border-b border-black/5 bg-[linear-gradient(180deg,#fafaf9_0%,#f4f4f2_100%)]">
-        <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
-          <div className="rounded-[2rem] sm:rounded-4xl border border-black/8 bg-white px-4 py-6 shadow-[0_24px_45px_-35px_rgba(15,23,42,0.28)] sm:px-8 sm:py-10 lg:px-10">
-            <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Mortgage Prequalification
-            </div>
-            <h1 className="mt-5 max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-slate-900 sm:text-5xl lg:text-6xl">
-              A cleaner, more professional mortgage journey for customers.
-            </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:mt-5 sm:text-lg sm:leading-8">
-              Start with a structured product flow, capture borrower information clearly, and present qualification results in a way customers can trust.
-            </p>
-
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              {trustHighlights.map((item) => (
-                <div key={item.title} className="rounded-3xl border border-slate-200 bg-stone-50 px-4 py-4">
-                  <p className="text-sm font-semibold text-slate-900">{item.title}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
-                </div>
-              ))}
+    <div className="min-h-screen w-full bg-gray-100 px-4 pb-4 font-sans text-ncb-text selection:bg-ncb-blue selection:text-white sm:px-5 sm:pb-5 lg:px-6 lg:pb-6">
+      
+      {/* --- HEADER - Navigation items on the left --- */}
+      <header className="sticky top-0 z-50 rounded-[28px] border border-ncb-divider bg-white/90 backdrop-blur-md shadow-[0_18px_30px_-24px_rgba(15,23,42,0.28)]">
+        <div className={pageShell}>
+          <div className="flex items-center justify-between gap-6 px-5 py-3 sm:px-6 lg:px-7">
+            {/* Logo on the left */}
+            <div className="flex items-center gap-2 cursor-pointer" onClick={(e) => scrollToSection(e, 'hero')}>
+              <img 
+                src={NCBALogo} 
+                alt="NCBA Logo" 
+                className="h-8 w-auto object-contain"
+              />
+              <span className="text-base font-bold tracking-tighter text-ncb-heading">NCBA</span>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button
+            {/* Desktop Navigation - All items including Get Started on the left */}
+            <div className="hidden lg:flex items-center gap-6 ml-8">
+              <button
                 onClick={onNavigateToCalculator}
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto border-slate-900 bg-slate-900 text-white hover:border-slate-800 hover:bg-slate-800"
+                className="inline-flex items-center gap-2 px-5 py-2 text-[12px] font-bold uppercase tracking-widest text-ncb-heading  hover:text-blue-400 transition-all duration-300"
               >
-                Start Prequalification
-              </Button>
-              <Button
-                onClick={onNavigateToQRCode}
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-100"
+                Get Started
+                <ArrowRight size={14} />
+              </button>
+              <a 
+                href="#hero" 
+                onClick={(e) => scrollToSection(e, 'hero')} 
+                className="text-[12px] font-bold uppercase tracking-widest text-ncb-heading hover:text-blue-400 transition-colors"
               >
-                Open QR Code
-              </Button>
+                Home
+              </a>
+              <a 
+                href="#about" 
+                onClick={(e) => scrollToSection(e, 'about')} 
+                className="text-[12px] font-bold uppercase tracking-widest text-ncb-heading hover:text-blue-400 transition-colors"
+              >
+                About
+              </a>
+              <a 
+                href="#faqs" 
+                onClick={(e) => scrollToSection(e, 'faqs')} 
+                className="text-[12px] font-bold uppercase tracking-widest text-ncb-heading hover:text-blue-400 transition-colors"
+              >
+                FAQs
+              </a>
             </div>
 
-            <div className="mt-8 rounded-3xl border border-slate-200 bg-stone-50 px-5 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">What customers experience</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                A guided flow with quieter typography, generous spacing, rounded form surfaces, and structured content that feels credible from the first screen.
+            {/* Empty div for spacing on the right (mobile menu button will go here on mobile) */}
+            <div className="lg:hidden">
+              <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+                className="p-2 text-ncb-heading"
+              >
+                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden bg-white border-t border-ncb-divider py-4 px-4 sm:px-5">
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={onNavigateToCalculator}
+                className="w-full py-2.5 text-[12px] font-bold uppercase tracking-widest text-ncb-heading hover:text-blue-400 transition-all flex items-center justify-center gap-2"
+              >
+                Get Started
+                <ArrowRight size={14} />
+              </button>
+              <a 
+                href="#hero" 
+                onClick={(e) => scrollToSection(e, 'hero')} 
+                className="text-[12px] font-bold uppercase tracking-widest text-ncb-heading hover:text-blue-400 py-2 text-center"
+              >
+                Home
+              </a>
+              <a 
+                href="#about" 
+                onClick={(e) => scrollToSection(e, 'about')} 
+                className="text-[12px] font-bold uppercase tracking-widest text-ncb-heading hover:text-blue-400 py-2 text-center"
+              >
+                About
+              </a>
+              <a 
+                href="#faqs" 
+                onClick={(e) => scrollToSection(e, 'faqs')} 
+                className="text-[12px] font-bold uppercase tracking-widest text-ncb-heading hover:text-blue-400 py-2 text-center"
+              >
+                FAQs
+              </a>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* --- HERO SECTION --- */}
+      <section id="hero" className="relative overflow-hidden bg-transparent pt-4 sm:pt-5">
+        <div className={pageShell}>
+          <div className="rounded-[28px] bg-ncb-lightbg px-5 py-8 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.18)] sm:px-7 sm:py-10 lg:px-10 lg:py-12">
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+            {/* Left Content */}
+            <div className="space-y-6">
+              {/* Badge */}
+              <div className="inline-block px-3 py-1 bg-blue-50 rounded-full">
+                <span className="text-[10px] font-bold text-ncb-blue uppercase tracking-[0.2em]">
+                  Mortgage Prequalification
+                </span>
+              </div>
+              
+              {/* Main Heading */}
+              <h1 className="text-5xl lg:text-7xl font-extrabold leading-[1.1] tracking-tighter text-ncb-heading">
+                Seamless <br />
+                <span className="text-blue-400">Mortgage</span> <br />
+                Solutions.
+              </h1>
+              
+              {/* Description */}
+              <p className="text-lg text-ncb-text leading-relaxed max-w-md font-medium">
+                Want to find a home? We are ready to help you find one that suits your lifestyle and needs.
               </p>
             </div>
+
+            {/* Right Image */}
+            <div className="relative">
+              <div className="aspect-4/5 rounded-2xl overflow-hidden shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] transform rotate-1">
+                <img 
+                  src="/src/assets/images/m4.png" 
+                  alt="Modern Architecture" 
+                  className="w-full h-full object-cover scale-105"
+                />
+              </div>
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-blue-600/20 rounded-full blur-2xl -z-10" />
+            </div>
+          </div>
           </div>
         </div>
       </section>
 
-      <section className="w-full py-8 sm:py-12">
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10">
-          <div className="rounded-[2rem] sm:rounded-4xl border border-slate-200 bg-white p-5 shadow-[0_20px_40px_-36px_rgba(15,23,42,0.28)] sm:p-8 lg:p-10">
+      {/* Spacer after Hero */}
+      <SectionSpacer />
+
+      {/* --- HOW IT WORKS SECTION --- */}
+      <section id="about" className="bg-transparent">
+        <div className={pageShell}>
+          <div className="rounded-[28px] bg-white px-5 py-8 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.12)] sm:px-7 sm:py-10 lg:px-10 lg:py-12">
+          {/* Section Header */}
+          <div className="mb-12 flex flex-col items-center gap-4 text-center">
             <div className="max-w-2xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">How it works</p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-slate-900 sm:text-4xl">Structured, calm, and easy to follow.</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
-                The customer-facing experience should feel organized from the first interaction, with each stage clearly separated and easy to understand.
+              <div className="mb-4 flex items-center justify-center gap-3">
+                <div className="w-10 h-0.5 bg-blue-600" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-blue-600">Process</span>
+              </div>
+              <h2 className="text-3xl lg:text-5xl font-bold tracking-tighter text-ncb-heading">
+                How It Works
+              </h2>
+            </div>
+            <p className="max-w-2xl text-base font-medium leading-relaxed text-ncb-text">
+              Move through the mortgage journey in a clear order, with each step focused on one action at a time.
+            </p>
+          </div>
+
+          {/* Steps Flow */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:items-center md:gap-4 lg:gap-6">
+            {processSteps.map((step, index) => (
+              <React.Fragment key={step.number}>
+                <div className="group relative min-h-48 overflow-hidden rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
+                  <div className="flex min-h-36 flex-col items-center justify-center">
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-lg font-bold text-blue-600 transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white">
+                      {index + 1}
+                    </span>
+                    <h3 className="mt-4 text-lg font-bold tracking-tight text-ncb-heading transition-all duration-300 group-hover:text-blue-700">
+                      {step.title}
+                    </h3>
+                    <p className="mt-3 max-w-56 text-xs leading-relaxed text-ncb-text opacity-0 transition-all duration-300 group-hover:opacity-100">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+
+                {index < processSteps.length - 1 && (
+                  <div className="hidden items-center justify-center text-blue-600 md:flex" aria-hidden="true">
+                    <div className="flex items-center gap-2">
+                      <div className="h-px w-6 bg-blue-200 lg:w-8"></div>
+                      <ArrowRight size={16} strokeWidth={2} />
+                      <div className="h-px w-6 bg-blue-200 lg:w-8"></div>
+                    </div>
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Spacer after How It Works */}
+      <SectionSpacer />
+
+      {/* --- FAQ SECTION --- */}
+      <section id="faqs" className="bg-transparent">
+        <div className={pageShell}>
+          <div className="grid grid-cols-1 gap-10 rounded-[28px] bg-ncb-lightbg px-5 py-8 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.14)] sm:px-7 sm:py-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:gap-12 lg:px-10 lg:py-12">
+            {/* Left Column */}
+            <div className="max-w-xl">
+              <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-blue-600">
+                Frequently Asked Questions
+              </span>
+              <h2 className="mt-5 text-3xl font-bold tracking-tighter text-ncb-heading lg:text-5xl">
+                Frequently asked
+                <span className="block text-blue-600">questions</span>
+              </h2>
+              <p className="mt-4 max-w-lg text-sm leading-7 text-ncb-text lg:text-base">
+                Find direct answers about the mortgage prequalification flow, what information is required, and how the assessment works.
               </p>
             </div>
 
-            <div className="mt-8 grid gap-4 lg:grid-cols-3">
-              {processSteps.map((step) => (
-                <div key={step.step} className="rounded-3xl border border-slate-200 bg-stone-50 px-5 py-5 sm:px-6 sm:py-6">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-slate-900">{step.title}</span>
-                    <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-slate-500">
-                      {step.step}
-                    </span>
-                  </div>
-                  <p className="mt-4 text-sm leading-6 text-slate-600">{step.description}</p>
+            {/* Right Column - FAQ Cards */}
+            <div className="space-y-3">
+              {faqs.map((faq, index) => (
+                <div
+                  key={index}
+                  className={`overflow-hidden rounded-xl border bg-white transition-all duration-300 ${
+                    openFaq === index
+                      ? 'border-blue-300 shadow-sm'
+                      : 'border-gray-200 shadow-sm hover:border-gray-300'
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                    className="flex w-full items-start justify-between gap-3 p-5 text-left"
+                  >
+                    <div className="pr-2">
+                      <h3 className="text-sm font-semibold leading-6 text-ncb-heading sm:text-base">
+                        {faq.question}
+                      </h3>
+                      {openFaq === index && (
+                        <p className="mt-3 text-xs leading-6 text-ncb-text sm:text-sm">
+                          {faq.answer}
+                        </p>
+                      )}
+                    </div>
+                    <div className={`mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                      openFaq === index ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-600'
+                    }`}>
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`}
+                      />
+                    </div>
+                  </button>
                 </div>
               ))}
             </div>
@@ -146,31 +329,47 @@ export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
         </div>
       </section>
 
-      <section className="w-full pb-10 sm:pb-12">
-        <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-10">
-          <div className="rounded-[2rem] sm:rounded-4xl border border-slate-200 bg-white p-5 shadow-[0_20px_40px_-36px_rgba(15,23,42,0.24)] sm:p-8 lg:p-10">
-            <div className="max-w-2xl">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Common Questions</p>
-              <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-slate-900 sm:text-4xl">Information customers usually ask for.</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
-                Keep the experience reassuring and transparent by answering the questions borrowers normally ask before starting.
-              </p>
-            </div>
+      {/* Spacer after FAQ */}
+      <SectionSpacer />
 
-            <div className="mt-8">
-              <Accordion items={faqs} defaultOpenIndex={0} className="space-y-3" />
+      {/* --- FOOTER --- */}
+      <footer className="bg-transparent">
+        <div className={pageShell}>
+          <div className="rounded-[28px] bg-white px-5 py-8 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.1)] sm:px-7 sm:py-10 lg:px-10 lg:py-10">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-t border-ncb-divider pt-10">
+            {/* Logo and Brand */}
+            <div className="flex items-center gap-2">
+              <img 
+                src={NCBALogo} 
+                alt="NCBA Logo" 
+                className="h-7 w-auto object-contain"
+              />
+              <span className="text-xs font-bold uppercase tracking-widest text-ncb-heading">
+                NCBA Mortgage
+              </span>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="w-full border-t border-slate-200 bg-white py-10">
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10">
-          <div className="text-center">
-            <p className="text-sm font-medium text-slate-500">
-              © {new Date().getFullYear()} Mortgage Loan Prequalification System. All rights reserved.
+            
+            {/* Copyright */}
+            <p className="text-[10px] font-bold text-ncb-text uppercase tracking-widest">
+              © {new Date().getFullYear()} All Rights Reserved.
             </p>
-            <p className="mt-2 text-xs text-slate-400">Staff? <a href="#admin-login" className="underline">Sign in</a></p>
+            
+            {/* Footer Links */}
+            <div className="flex gap-6">
+              <a 
+                href="#" 
+                className="text-[10px] font-bold uppercase tracking-widest text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                Privacy
+              </a>
+              <a 
+                href="#" 
+                className="text-[10px] font-bold uppercase tracking-widest text-blue-600 hover:text-blue-700 transition-colors"
+              >
+                Terms
+              </a>
+            </div>
+            </div>
           </div>
         </div>
       </footer>
