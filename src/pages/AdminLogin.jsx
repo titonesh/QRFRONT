@@ -19,7 +19,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen w-full flex bg-black">
+    <div className="min-h-screen w-full flex bg-black overflow-x-hidden">
       {/* LEFT: large image panel - visible on medium+ screens */}
       <div className="hidden lg:flex lg:w-2/3 xl:w-3/4 relative">
         <div
@@ -32,13 +32,13 @@ export default function AdminLogin() {
 
       {/* RIGHT: dark form panel */}
       <div className="w-full lg:w-1/3 xl:w-1/4 flex items-center justify-center">
-        <div className="w-full max-w-lg px-10 py-16">
-          <div className="text-white text-4xl font-light mb-3">Go For It</div>
+        <div className="w-full max-w-lg px-5 py-10 sm:px-8 sm:py-14 lg:px-10 lg:py-16">
+          <div className="text-white text-3xl sm:text-4xl font-light mb-3">Go For It</div>
 
           
-          <div className="text-gray-400 mb-8">Let's turn Promises to Reality.</div>
+          <div className="text-sm sm:text-base text-gray-400 mb-8">Let's turn Promises to Reality.</div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
             <div>
               <label className="text-sm text-gray-300">E-mail</label>
               <input

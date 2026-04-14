@@ -31,14 +31,14 @@ export default function Accordion({
           {/* Header/Trigger */}
           <button
             onClick={() => handleToggle(index)}
-            className="w-full px-6 md:px-8 py-6 md:py-7 flex items-center justify-between hover:bg-neutral-light transition-colors duration-200 text-left group"
+            className="w-full px-4 py-4 sm:px-6 sm:py-6 md:px-8 md:py-7 flex items-start justify-between hover:bg-neutral-light transition-colors duration-200 text-left group gap-3"
           >
-            <h3 className="text-lg md:text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
+            <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
               {item.question}
             </h3>
             {/* Chevron Icon */}
             <svg
-              className={`w-6 h-6 text-primary transition-transform duration-300 flex-shrink-0 ml-4 ${
+              className={`w-6 h-6 text-primary transition-transform duration-300 shrink-0 ml-4 ${
                 openIndex === index ? 'rotate-180' : ''
               }`}
               fill="none"
@@ -60,7 +60,7 @@ export default function Accordion({
               openIndex === index ? 'max-h-96' : 'max-h-0'
             }`}
           >
-            <div className="px-6 md:px-8 py-6 border-t-2 border-neutral-light text-gray-600 text-base leading-relaxed animate-fadeIn">
+            <div className="px-4 py-4 sm:px-6 sm:py-6 md:px-8 border-t-2 border-neutral-light text-gray-600 text-sm sm:text-base leading-relaxed animate-fadeIn">
               {item.answer}
             </div>
           </div>

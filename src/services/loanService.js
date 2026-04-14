@@ -21,6 +21,7 @@ export const loanService = {
       const tenorRaw = parseInt(loanData.preferredLoanTenorYears, 10);
 
       const payload = {
+        productType: loanData.productType || null,
         monthlySalaryIncome: isNaN(ms) ? 0 : Math.max(0, ms),
         monthlyBusinessIncome: isNaN(mb) ? 0 : Math.max(0, mb),
         monthlyRentalPayments: isNaN(mr) ? 0 : Math.max(0, mr),

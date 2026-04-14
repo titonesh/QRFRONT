@@ -9,6 +9,7 @@ import Button from '../components/Button';
 export const QRCodePage = ({ onNavigateToHome }) => {
   const canvasRef = useRef();
   const [qrGenerated, setQrGenerated] = useState(false);
+  const canvasSize = 300;
 
   // The URL encoded in the QR code should deep-link into the calculator flow.
   const QR_URL = import.meta.env.VITE_QR_URL || 'http://localhost:3001/#calculator';
@@ -20,7 +21,7 @@ export const QRCodePage = ({ onNavigateToHome }) => {
         canvasRef.current,
         QR_URL,
         {
-          width: 300,
+          width: canvasSize,
           margin: 2,
           color: {
             dark: '#00AEEF',
@@ -90,8 +91,8 @@ export const QRCodePage = ({ onNavigateToHome }) => {
     <div className="w-full min-h-screen bg-white">
       {/* Header */}
       <header className="w-full bg-white border-b border-border shadow-sm">
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6">
-          <div className="w-full flex items-center justify-between">
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+          <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
               QR Code Generator
             </h1>
@@ -99,6 +100,7 @@ export const QRCodePage = ({ onNavigateToHome }) => {
               onClick={onNavigateToHome}
               variant="outline"
               size="md"
+              className="w-full sm:w-auto"
             >
               Back to Home
             </Button>
@@ -107,35 +109,36 @@ export const QRCodePage = ({ onNavigateToHome }) => {
       </header>
 
       {/* Main Content */}
-      <section className="w-full py-16 md:py-24 lg:py-32">
+      <section className="w-full py-10 md:py-20 lg:py-28">
         <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
           <div className="w-full text-center">
             {/* Intro */}
-            <div className="w-full max-w-2xl mx-auto mb-12 md:mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <div className="w-full max-w-2xl mx-auto mb-10 md:mb-16">
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
                 Share Your Mortgage Prequalification
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
                 Use this QR code to share the mortgage prequalification application with clients and customers. 
                 Simply scan the code or print it for distribution.
               </p>
             </div>
 
             {/* QR Code Display */}
-            <div className="w-full flex justify-center mb-12">
+            <div className="w-full flex justify-center mb-10 sm:mb-12">
               <div 
-                className="bg-white p-8 rounded-2xl shadow-xl border-2 border-border"
+                className="bg-white p-4 sm:p-8 rounded-2xl shadow-xl border-2 border-border w-full max-w-[22rem] sm:max-w-none sm:w-auto"
               >
                 <canvas
                   ref={canvasRef}
                   style={{
                     display: qrGenerated ? 'block' : 'none',
-                    width: '300px',
-                    height: '300px',
+                    width: 'min(100%, 300px)',
+                    height: 'auto',
+                    aspectRatio: '1 / 1',
                   }}
                 />
                 {!qrGenerated && (
-                  <div className="w-75 h-75 flex items-center justify-center bg-neutral-light rounded">
+                  <div className="aspect-square w-full max-w-[300px] flex items-center justify-center bg-neutral-light rounded">
                     <p className="text-gray-600">Generating QR Code...</p>
                   </div>
                 )}
@@ -143,7 +146,7 @@ export const QRCodePage = ({ onNavigateToHome }) => {
             </div>
 
             {/* QR Code Info */}
-            <div className="w-full max-w-2xl mx-auto mb-12 p-6 bg-neutral-light rounded-xl border border-border">
+            <div className="w-full max-w-2xl mx-auto mb-10 sm:mb-12 p-4 sm:p-6 bg-neutral-light rounded-xl border border-border text-left sm:text-center">
               <p className="text-gray-700 font-medium mb-2">QR Code Details:</p>
               <p className="text-gray-600 text-sm break-all">
                 <span className="font-semibold">URL:</span> {QR_URL}
@@ -154,12 +157,12 @@ export const QRCodePage = ({ onNavigateToHome }) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="w-full flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <div className="w-full flex flex-col sm:flex-row gap-4 justify-center items-stretch sm:items-center mb-10 sm:mb-12">
               <Button
                 onClick={downloadQRCode}
                 variant="primary"
                 size="lg"
-                className="shadow-lg hover:shadow-xl"
+                className="w-full sm:w-auto shadow-lg hover:shadow-xl"
               >
                 Download QR Code
               </Button>
@@ -167,7 +170,7 @@ export const QRCodePage = ({ onNavigateToHome }) => {
                 onClick={printQRCode}
                 variant="secondary"
                 size="lg"
-                className="shadow-lg hover:shadow-xl"
+                className="w-full sm:w-auto shadow-lg hover:shadow-xl"
               >
                 Print QR Code
               </Button>
@@ -175,7 +178,7 @@ export const QRCodePage = ({ onNavigateToHome }) => {
 
             {/* Instructions */}
             <div className="w-full max-w-3xl mx-auto text-left">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">How to Use</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-5 sm:mb-6">How to Use</h3>
               <div className="space-y-4">
                 <div className="p-4 bg-primary-light rounded-lg border border-primary/20">
                   <h4 className="font-bold text-gray-900 mb-2">📱 For Mobile Users</h4>

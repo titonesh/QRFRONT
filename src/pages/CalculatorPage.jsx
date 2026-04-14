@@ -330,12 +330,12 @@ export const CalculatorPage = ({ onBackHome }) => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#F8FAFC] flex flex-col">
+    <div className="min-h-screen w-full bg-[#F8FAFC] flex flex-col overflow-x-hidden">
       {/* Header - Improved spacing and back button hit area */}
       <header className="bg-white shadow-sm sticky top-0 z-30 border-b border-slate-200 w-full">
-        <div className="w-full px-6 py-4">
-          <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
-            <div className="flex items-center gap-6">
+        <div className="w-full px-4 py-4 sm:px-6">
+          <div className="max-w-7xl mx-auto w-full flex justify-between items-center gap-3">
+            <div className="flex items-center gap-3 sm:gap-6 min-w-0">
               <Button
                 onClick={onBackHome}
                 variant="outline"
@@ -346,7 +346,7 @@ export const CalculatorPage = ({ onBackHome }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </Button>
-              <div>
+              <div className="min-w-0">
                 <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Mortgage Calculator</h1>
                 <p className="text-xs sm:text-sm text-slate-500 hidden sm:block">
                   {selectedProduct
@@ -359,24 +359,24 @@ export const CalculatorPage = ({ onBackHome }) => {
         </div>
       </header>
 
-      <main className="flex-1 w-full px-6 py-12">
+      <main className="flex-1 w-full px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
         <div className="max-w-7xl mx-auto w-full">
           {!calculationResult ? (
             <section className="w-full">
               <div className="flex justify-center w-full">
                 <div className="w-full max-w-5xl">
                   {!selectedProduct ? (
-                    <div className="overflow-hidden rounded-4xl border border-slate-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
-                      <div className="border-b border-slate-100 bg-slate-50/50 px-8 py-10">
+                    <div className="overflow-hidden rounded-[2rem] sm:rounded-4xl border border-slate-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
+                      <div className="border-b border-slate-100 bg-slate-50/50 px-4 py-6 sm:px-8 sm:py-10">
                         <div className="max-w-2xl text-center mx-auto">
-                          <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Select mortgage product</h2>
-                          <p className="mt-3 text-slate-500 sm:text-base">
+                          <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-3xl">Select mortgage product</h2>
+                          <p className="mt-3 text-sm text-slate-500 sm:text-base">
                             Choose a product type to begin your prequalification.
                           </p>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 gap-8 p-8 md:grid-cols-2">
+                      <div className="grid grid-cols-1 gap-5 p-4 sm:gap-8 sm:p-8 md:grid-cols-2">
                         {MORTGAGE_PRODUCTS.map((product) => (
                           <button
                             key={product.id}
@@ -385,7 +385,7 @@ export const CalculatorPage = ({ onBackHome }) => {
                             className="group flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white text-left transition-all duration-300 hover:border-primary hover:shadow-xl hover:-translate-y-1 focus:ring-2 focus:ring-primary focus:ring-offset-4"
                           >
                             {/* Image Section - Darker gradient for better text contrast */}
-                            <div className="relative h-60 overflow-hidden bg-slate-100">
+                            <div className="relative h-48 overflow-hidden bg-slate-100 sm:h-60">
                               <img
                                 src={product.image}
                                 alt={product.label}
@@ -400,7 +400,7 @@ export const CalculatorPage = ({ onBackHome }) => {
                             </div>
 
                             {/* Content Section */}
-                            <div className="flex flex-1 flex-col p-7">
+                            <div className="flex flex-1 flex-col p-5 sm:p-7">
                               <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2">Mortgage Type</p>
                               <h3 className="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors">{product.label}</h3>
                               <p className="mt-3 text-sm leading-relaxed text-slate-500 line-clamp-2">
@@ -419,7 +419,7 @@ export const CalculatorPage = ({ onBackHome }) => {
                               </div>
 
                               {/* Footer Action - Higher visibility CTA */}
-                             <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-6 px-0">
+                              <div className="mt-auto flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-5 px-0 sm:flex-row sm:items-center">
                                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-tight">
                                   Click to proceed
                                 </span>
@@ -445,16 +445,17 @@ export const CalculatorPage = ({ onBackHome }) => {
               </div>
             </section>
           ) : (
-            <section className="py-8 w-full">
+            <section className="py-6 sm:py-8 w-full">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 w-full">
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-900">Your Prequalification Results</h2>
-                  <p className="text-slate-500 mt-2">Based on the information you provided for {selectedProduct?.label}.</p>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Your Prequalification Results</h2>
+                  <p className="text-sm sm:text-base text-slate-500 mt-2">Based on the information you provided for {selectedProduct?.label}.</p>
                 </div>
                 <Button
                   onClick={() => setCalculationResult(null)}
                   variant="secondary"
                   size="md"
+                  className="w-full sm:w-auto"
                 >
                   Calculate Again
                 </Button>
@@ -489,7 +490,7 @@ export const CalculatorPage = ({ onBackHome }) => {
       )}
 
       {/* Footer - Better spacing */}
-      <footer className="w-full bg-white border-t border-slate-200 py-12 px-6">
+      <footer className="w-full bg-white border-t border-slate-200 py-8 px-4 sm:px-6 sm:py-12">
         <div className="max-w-7xl mx-auto w-full text-center">
           <p className="text-sm text-slate-500 max-w-lg mx-auto leading-relaxed">
             This is a preliminary prequalification. Final approval requires full documentation and credit review.

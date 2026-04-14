@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-.dashboard { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+.dashboard { max-width: 1400px; margin: 0 auto; padding: 20px 24px 28px; }
 
 .dashboard-header {
     display: flex;
@@ -63,7 +63,7 @@
 .filter-label { font-weight:600; font-size:.75rem; color:#4a6f8c; }
 .filter-select, .filter-date { padding:8px 12px; border-radius:32px; border:1px solid #d8e8f3; background:white; font-family:Inter, sans-serif; font-size:.8rem; cursor:pointer; }
 .btn-clear { background:#f5f8fb; border:none; padding:8px 14px; border-radius:32px; font-weight:600; font-size:.75rem; cursor:pointer; display:flex; align-items:center; gap:6px; }
-.action-buttons { display:flex; gap:12px; margin-left:auto; }
+.action-buttons { display:flex; gap:12px; margin-left:auto; flex-wrap:wrap; }
 .btn-export { background:white; border:1px solid #cbdde9; padding:9px 22px; border-radius:40px; font-weight:600; font-size:.8rem; cursor:pointer; display:flex; align-items:center; gap:8px; }
 .btn-mark { background:#1a4d6b; border:none; padding:9px 24px; border-radius:40px; color:white; font-weight:600; font-size:.8rem; cursor:pointer; display:flex; align-items:center; gap:8px; transition:.2s; }
 .btn-mark:hover { background:#0e3a52; }
@@ -88,10 +88,39 @@
 .toast { position:fixed; bottom:28px; right:28px; background:#1e3b4f; color:white; padding:12px 24px; border-radius:50px; font-size:.8rem; z-index:1000; box-shadow:0 6px 16px rgba(0,0,0,0.12); }
 
 /* Detail modal styles to match dashboard look */
-.detail-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 60; display: flex; justify-content: center; align-items: flex-start; padding-top: 48px; }
-.detail-modal-panel { width: 82%; max-width: 1100px; background: white; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.18); padding: 18px; border: 1px solid #eef6fb; max-height: 80vh; overflow: auto; }
+.detail-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 60; display: flex; justify-content: center; align-items: flex-start; padding: 24px 16px; }
+.detail-modal-panel { width: min(1100px, 100%); background: white; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.18); padding: 18px; border: 1px solid #eef6fb; max-height: calc(100vh - 48px); overflow: auto; }
 .detail-modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
 .detail-modal-body { display:grid; grid-template-columns: 1fr 2fr; gap:16px; }
 .detail-modal-card { background:#fbfeff; padding:12px; border-radius:12px; border:1px solid #eef6fb; }
 .detail-modal-card h3 { margin:0 0 8px 0; }
 .modal-actions { display:flex; gap:10px; margin-top:12px; }
+
+@media (max-width: 900px) {
+    .dashboard { padding: 16px 16px 24px; }
+    .filter-bar { padding: 12px; }
+    .search-wrapper { flex: 1 1 100%; min-width: 0; }
+    .filter-group { width: 100%; justify-content: space-between; }
+    .filter-select, .filter-date, .btn-clear { width: 100%; }
+    .action-buttons { width: 100%; margin-left: 0; }
+    .btn-export, .btn-mark { flex: 1 1 220px; justify-content: center; }
+    .detail-modal-body { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+    .dashboard-header { align-items: stretch; }
+    .signout-btn { width: 100%; justify-content: center; }
+    .stat-card { padding: 14px 16px; }
+    .stat-number { font-size: 1.35rem; }
+    .filter-group { gap: 8px; }
+    .filter-label { width: 100%; }
+    .btn-export, .btn-mark, .btn-clear { width: 100%; justify-content: center; }
+    .pagination-area { border-radius: 24px; padding: 12px 14px; }
+    .pagination-controls { width: 100%; justify-content: space-between; }
+    .page-btn { flex: 1 1 0; justify-content: center; }
+    .toast { left: 16px; right: 16px; bottom: 16px; border-radius: 18px; }
+    .detail-modal-overlay { padding: 12px; }
+    .detail-modal-panel { padding: 14px; max-height: calc(100vh - 24px); }
+    .detail-modal-header { gap: 10px; align-items: flex-start; flex-direction: column; }
+    .modal-actions { flex-direction: column; }
+}

@@ -546,18 +546,18 @@ export default function AdminCallbacks() {
           <div className="detail-modal-panel">
             <div className="detail-modal-header">
               <h2 className="text-lg font-semibold">Callback Request Details - ID: #{selected.id}</h2>
-              <Button variant="outline" onClick={closeDetail}>Close</Button>
+              <Button variant="outline" onClick={closeDetail} className="w-full sm:w-auto">Close</Button>
             </div>
 
             <div className="detail-modal-body">
               <Card className="detail-modal-card">
                 <h3 className="font-semibold mb-3">Customer Information</h3>
                 <div className="space-y-2 text-sm">
-                  <div className="flex"><div className="w-36 text-gray-600">Full Name:</div><div className="flex-1">{selected.fullName}</div></div>
-                  <div className="flex"><div className="w-36 text-gray-600">Phone:</div><div className="flex-1">{selected.phoneNumber}</div></div>
-                  <div className="flex"><div className="w-36 text-gray-600">Email:</div><div className="flex-1">{selected.email}</div></div>
-                  <div className="flex"><div className="w-36 text-gray-600">Referral No:</div><div className="flex-1">{selected.referralNumber || '—'}</div></div>
-                  <div className="flex"><div className="w-36 text-gray-600">Submitted:</div><div className="flex-1">{formatTimestamp(selected.createdAt)}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Full Name:</div><div className="flex-1 break-words">{selected.fullName}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Phone:</div><div className="flex-1 break-words">{selected.phoneNumber}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Email:</div><div className="flex-1 break-words">{selected.email}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Referral No:</div><div className="flex-1 break-words">{selected.referralNumber || '—'}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Submitted:</div><div className="flex-1 break-words">{formatTimestamp(selected.createdAt)}</div></div>
                   {selected.message && (
                     <div className="mt-3">
                       <div className="w-full text-gray-600">Message:</div>
@@ -586,9 +586,9 @@ export default function AdminCallbacks() {
                           <div className="text-gray-700 font-medium mb-1">Loan Inputs</div>
                           <div className="space-y-2">
                             {entries.map(([k, v]) => (
-                              <div className="grid grid-cols-2 gap-2 items-center" key={`in-${k}`}>
+                              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 items-center" key={`in-${k}`}>
                                 <div className="text-sm text-gray-600">{labelMap[k] || k}:</div>
-                                <div className="text-sm font-medium text-gray-800">{typeof v === 'number' ? formatAmount(v) : (typeof v === 'object' ? JSON.stringify(v) : String(v))}</div>
+                                <div className="text-sm font-medium text-gray-800 break-words">{typeof v === 'number' ? formatAmount(v) : (typeof v === 'object' ? JSON.stringify(v) : String(v))}</div>
                               </div>
                             ))}
                             {selected.loanResultJson && (() => {
@@ -598,7 +598,7 @@ export default function AdminCallbacks() {
                                 if (apr !== null && apr !== undefined) {
                                   if (apr > 0 && apr < 1) apr = apr * 100;
                                   return (
-                                    <div className="grid grid-cols-2 gap-2 items-center mt-2">
+                                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 items-center mt-2">
                                       <div className="text-sm text-gray-600">Applied Interest Rate:</div>
                                       <div className="text-sm font-medium text-gray-800">{String(apr)}%</div>
                                     </div>
@@ -629,9 +629,9 @@ export default function AdminCallbacks() {
                           )}
                           <div className="space-y-2">
                             {entries.map(([k, v]) => (
-                              <div className="grid grid-cols-2 gap-2 items-center" key={`res-${k}`}>
+                              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 items-center" key={`res-${k}`}>
                                 <div className="text-sm text-gray-600">{labelMap[k] || k}:</div>
-                                <div className="text-sm font-medium text-gray-800">{typeof v === 'number' ? formatAmount(v) : (typeof v === 'object' ? JSON.stringify(v) : String(v))}</div>
+                                <div className="text-sm font-medium text-gray-800 break-words">{typeof v === 'number' ? formatAmount(v) : (typeof v === 'object' ? JSON.stringify(v) : String(v))}</div>
                               </div>
                             ))}
                           </div>
@@ -647,10 +647,10 @@ export default function AdminCallbacks() {
               <div style={{width:'100%'}}>
                 <div className="w-full text-sm text-gray-600 mb-1">Notes (admin only)</div>
                 <textarea id="admin-notes" className="w-full border p-3 rounded h-28" placeholder="Write admin feedback or notes here" defaultValue={selected.adminNotes || ''}></textarea>
-                <div style={{display:'flex', gap:12, marginTop:12, justifyContent:'flex-end'}}>
-                  <Button variant="outline" onClick={saveNotesForSelected}>Save Notes</Button>
-                  <Button variant="outline" onClick={markSelectedAsContacted}>Mark as Contacted</Button>
-                  <Button variant="outline" onClick={() => handlePrint(selected)}>Export PDF</Button>
+                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:justify-end">
+                  <Button variant="outline" onClick={saveNotesForSelected} className="w-full sm:w-auto">Save Notes</Button>
+                  <Button variant="outline" onClick={markSelectedAsContacted} className="w-full sm:w-auto">Mark as Contacted</Button>
+                  <Button variant="outline" onClick={() => handlePrint(selected)} className="w-full sm:w-auto">Export PDF</Button>
                 </div>
               </div>
             </div>

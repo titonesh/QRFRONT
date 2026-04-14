@@ -68,15 +68,15 @@ export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
   return (
     <div className="min-h-screen w-full bg-stone-50 text-slate-900">
       <section className="w-full border-b border-black/5 bg-[linear-gradient(180deg,#fafaf9_0%,#f4f4f2_100%)]">
-        <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
-          <div className="rounded-4xl border border-black/8 bg-white px-6 py-8 shadow-[0_24px_45px_-35px_rgba(15,23,42,0.28)] sm:px-8 sm:py-10 lg:px-10">
+        <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-12">
+          <div className="rounded-[2rem] sm:rounded-4xl border border-black/8 bg-white px-4 py-6 shadow-[0_24px_45px_-35px_rgba(15,23,42,0.28)] sm:px-8 sm:py-10 lg:px-10">
             <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
               Mortgage Prequalification
             </div>
-            <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-slate-900 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-slate-900 sm:text-5xl lg:text-6xl">
               A cleaner, more professional mortgage journey for customers.
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:mt-5 sm:text-lg sm:leading-8">
               Start with a structured product flow, capture borrower information clearly, and present qualification results in a way customers can trust.
             </p>
 
@@ -94,7 +94,7 @@ export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
                 onClick={onNavigateToCalculator}
                 variant="outline"
                 size="lg"
-                className="border-slate-900 bg-slate-900 text-white hover:border-slate-800 hover:bg-slate-800"
+                className="w-full sm:w-auto border-slate-900 bg-slate-900 text-white hover:border-slate-800 hover:bg-slate-800"
               >
                 Start Prequalification
               </Button>
@@ -102,7 +102,7 @@ export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
                 onClick={onNavigateToQRCode}
                 variant="outline"
                 size="lg"
-                className="border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-100"
+                className="w-full sm:w-auto border-slate-300 bg-white text-slate-900 hover:border-slate-400 hover:bg-slate-100"
               >
                 Open QR Code
               </Button>
@@ -118,12 +118,12 @@ export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
         </div>
       </section>
 
-      <section className="w-full py-10 sm:py-12">
+      <section className="w-full py-8 sm:py-12">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10">
-          <div className="rounded-4xl border border-slate-200 bg-white p-6 shadow-[0_20px_40px_-36px_rgba(15,23,42,0.28)] sm:p-8 lg:p-10">
+          <div className="rounded-[2rem] sm:rounded-4xl border border-slate-200 bg-white p-5 shadow-[0_20px_40px_-36px_rgba(15,23,42,0.28)] sm:p-8 lg:p-10">
             <div className="max-w-2xl">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">How it works</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-slate-900 sm:text-4xl">Structured, calm, and easy to follow.</h2>
+              <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-slate-900 sm:text-4xl">Structured, calm, and easy to follow.</h2>
               <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
                 The customer-facing experience should feel organized from the first interaction, with each stage clearly separated and easy to understand.
               </p>
@@ -146,12 +146,12 @@ export const HomePage = ({ onNavigateToCalculator, onNavigateToQRCode }) => {
         </div>
       </section>
 
-      <section className="w-full pb-12">
+      <section className="w-full pb-10 sm:pb-12">
         <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-10">
-          <div className="rounded-4xl border border-slate-200 bg-white p-6 shadow-[0_20px_40px_-36px_rgba(15,23,42,0.24)] sm:p-8 lg:p-10">
+          <div className="rounded-[2rem] sm:rounded-4xl border border-slate-200 bg-white p-5 shadow-[0_20px_40px_-36px_rgba(15,23,42,0.24)] sm:p-8 lg:p-10">
             <div className="max-w-2xl">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Common Questions</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-slate-900 sm:text-4xl">Information customers usually ask for.</h2>
+              <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-slate-900 sm:text-4xl">Information customers usually ask for.</h2>
               <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
                 Keep the experience reassuring and transparent by answering the questions borrowers normally ask before starting.
               </p>

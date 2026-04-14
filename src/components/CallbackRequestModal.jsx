@@ -191,9 +191,9 @@ function CallbackRequestModal({ onClose, loanResultId = null, loanResponse = nul
                 </label>
               </div>
 
-              <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-                <button type="button" onClick={onClose} disabled={loading} className="input-field" style={{ background: '#fff', color: '#1f6e8c', border: '1px solid #cfe6ec', width: '50%' }}>Cancel</button>
-                <button type="submit" disabled={loading} className="calc-btn" style={{ width: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }} aria-busy={loading}>
+              <div className="mt-3 flex flex-col gap-3 sm:flex-row" style={{ marginTop: 12 }}>
+                <button type="button" onClick={onClose} disabled={loading} className="input-field" style={{ background: '#fff', color: '#1f6e8c', border: '1px solid #cfe6ec', width: '100%' }}>Cancel</button>
+                <button type="submit" disabled={loading} className="calc-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }} aria-busy={loading}>
                   {loading && (
                     <svg width="16" height="16" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
                       <g fill="none" fillRule="evenodd">

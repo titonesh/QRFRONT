@@ -21,12 +21,12 @@ export default function Modal({
       />
 
       {/* Modal Content */}
-      <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="absolute inset-0 flex items-center justify-center p-3 sm:p-4">
         <div
           className={`
             bg-white rounded-xl shadow-2xl
             w-full ${sizes[size]}
-            max-h-[90vh] overflow-y-auto
+            max-h-[92vh] overflow-y-auto
             animate-slideUp
             ${className}
           `}
@@ -34,7 +34,7 @@ export default function Modal({
         >
           {/* Header */}
           {title && (
-            <div className="flex items-center justify-between border-b border-gray-200 p-6">
+            <div className="flex items-center justify-between border-b border-gray-200 p-4 sm:p-6">
               <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
               <button
                 onClick={onClose}
@@ -47,7 +47,7 @@ export default function Modal({
           )}
 
           {/* Body */}
-          <div className={title ? 'p-6' : 'p-8'}>{children}</div>
+          <div className={title ? 'p-4 sm:p-6' : 'p-4 sm:p-8'}>{children}</div>
         </div>
       </div>
     </div>

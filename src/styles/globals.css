@@ -7,6 +7,22 @@
     --admin-border-subtle: color-mix(in srgb, white 3%, transparent);
     --admin-shadow-heavy: 0 30px 40px -20px color-mix(in srgb, black 50%, transparent);
   }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  img,
+  canvas,
+  video,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 /* Scoped admin login - more efficient selectors */
@@ -63,5 +79,20 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-login .absolute[style] {
     transition: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-login .form-panel {
+    max-width: none;
+    min-height: 100vh;
+    padding-block: 24px;
+    padding-inline: 20px;
+    border-left: 0;
+    box-shadow: none;
+  }
+
+  .admin-login .text-3xl {
+    font-size: 24px;
   }
 }
