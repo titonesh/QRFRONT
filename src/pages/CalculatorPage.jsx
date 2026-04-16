@@ -331,8 +331,8 @@ export const CalculatorPage = ({ onBackHome }) => {
 
   return (
     <div className="min-h-screen w-full bg-[#F8FAFC] flex flex-col overflow-x-hidden">
-      {/* Header - Improved spacing and back button hit area */}
-      <header className="bg-white shadow-sm sticky top-0 z-30 border-b border-slate-200 w-full">
+      {/* Header - Fixed at top for always visible navigation */}
+      <header className="bg-white shadow-md fixed top-0 left-0 right-0 z-50 border-b border-slate-200 w-full">
         <div className="w-full px-4 py-4 sm:px-6">
           <div className="max-w-7xl mx-auto w-full flex justify-between items-center gap-3">
             <div className="flex items-center gap-3 sm:gap-6 min-w-0">
@@ -359,7 +359,7 @@ export const CalculatorPage = ({ onBackHome }) => {
         </div>
       </header>
 
-      <main className="flex-1 w-full px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+      <main className="flex-1 w-full px-4 py-6 sm:px-6 sm:py-10 lg:py-12 mt-[88px]">
         <div className="max-w-7xl mx-auto w-full">
           {!calculationResult ? (
             <section className="w-full">
