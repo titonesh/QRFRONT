@@ -2,6 +2,29 @@ import React, { useEffect, useState } from 'react';
 import CallbackRequestModal from './CallbackRequestModal';
 import loanService from '../services/loanService';
 
+// List of Kenyan towns for business location autocomplete
+const KENYAN_TOWNS = [
+  'Nairobi', 'Mombasa', 'Nakuru', 'Ruiru', 'Eldoret', 'Kisumu', 'Kikuyu', 'Ngong', 'Mavoko', 'Thika', 
+  'Naivasha', 'Karuri', 'Kitale', 'Kiambu', 'Juja', 'Kitengela', 'Malindi', 'Mandera', 'Kisii', 'Kakamega', 
+  'Mtwapa', 'Wajir', 'Lodwar', 'Limuru', 'Meru', 'Nyeri', 'Isiolo', 'Ukunda (Diani)', 'Kiserian', 'Kilifi', 
+  'Nanyuki', 'Busia', 'Migori', 'Bungoma', 'Narok', 'Embu', 'Machakos', 'El Wak', 'Gilgil', 'Kimilili', 
+  'Kericho', 'Voi', 'Wanguru', 'Habaswein', 'Turi', 'Moyale', 'Homa Bay', 'Kenol', 'Masalani', 'Muranga', 
+  'Garissa', 'Kapenguria', 'Kitui', 'Marsabit', 'Nyahururu', 'Ol Kalou', 'Siaya', 'Taveta', 'Chuka', 
+  'Kangundo-Tala', 'Molo', 'Awendo', 'Kehancha', 'Ahero', 'Kabarnet', 'Kapsabet', 'Kerugoya', 'Kijabe', 
+  'Kinango', 'Kipkelion', 'Konza', 'Kwale', 'Lanet', 'Likoni', 'Loiyangalani', 'Lokoja', 'Luanda', 'Lugari', 
+  'Madogo', 'Magadi', 'Makindu', 'Malaba', 'Malakisi', 'Mariakani', 'Marigat', 'Masii', 'Matuu', 'Maua', 
+  'Mbale', 'Mbita', 'Merti', 'Migwani', 'Miritini', 'Mitunguu', 'Moi\'s Bridge', 'Mp Shah', 'Mumias', 'Mwingi', 
+  'Namanga', 'Nandi Hills', 'Ndhiwa', 'Nkubu', 'Nuno', 'Nyamira', 'Nyando', 'Olenguruone', 'Oloitokitok', 'Oriwo', 
+  'Oyugis', 'Pate', 'Port Victoria', 'Rabai', 'Rongo', 'Sabaki', 'Sare', 'Serem', 'Shimanzi', 'Shimoni', 'Sotik', 
+  'Stoni Athi', 'Suba', 'Suneka', 'Tabaka', 'Takaba', 'Taru', 'Timbila', 'Tindiret', 'Tseikuru', 'Tsavo', 'Tula', 
+  'Turbo', 'Ugunja', 'Ukwala', 'Vihiga', 'Webuye', 'Werugha', 'Witu', 'Wote', 'Yala', 'Ziwa'
+];
+
+// List of scheme companies (to be updated with actual company list)
+const SCHEME_COMPANIES = [
+  // Placeholder - will be populated with actual scheme companies
+];
+
 export default function ModernLoanCalculator({ selectedProduct, onChangeProduct }) {
   // Product type: 'affordableHousing' or 'stdMortgage'
   // Initialize based on selectedProduct prop
@@ -9,6 +32,9 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
   const [loanType, setLoanType] = useState(initialLoanType);
   // Income source type: 'employed' or 'business' (only applicable for affordableHousing)
   const [incomeSource, setIncomeSource] = useState('employed');
+  const [employerSelectionMode, setEmployerSelectionMode] = useState('scheme'); // 'scheme' or 'other'
+  const [employerOtherInput, setEmployerOtherInput] = useState('');
+  const [idNumber, setIdNumber] = useState(''); // ID number for credit score integration
   const [showCallbackModal, setShowCallbackModal] = useState(false);
   const [hasResults, setHasResults] = useState(false);
   const [calculated, setCalculated] = useState(false);
@@ -318,7 +344,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
 
     // Use the implemented refreshCalculation function above
     // Bind events to actual DOM elements (call getters)
-    const inputs = [salaryEl(), businessEl(), obligationsEl(), creditCardEl(), overdraftEl(), tenorEl()];
+    const inputs = [salaryEl(), businessEl(), obligationsEl(), creditCardEl(), overdraftEl(), tenorEl(), document.getElementById('employerName'), document.getElementById('natureOfBusiness'), document.getElementById('businessLocation')];
     inputs.forEach(input => {
       if (!input || typeof input.addEventListener !== 'function') return;
       const onInput = () => { try { if (!calculated) return; refreshCalculation(); } catch (e) { console.error(e); } };
@@ -376,7 +402,11 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
             overdraftLimit: getNumericValue(overdraftEl()),
             productType: loanType,
             incomeSourceType: incomeSource,
-            preferredLoanTenorYears: parseInt((tenorEl() && (tenorEl().value || '').toString().trim()) || '1', 10)
+            preferredLoanTenorYears: parseInt((tenorEl() && (tenorEl().value || '').toString().trim()) || '1', 10),
+            employerName: (document.getElementById('employerNameHidden')?.value || '').trim(),
+            natureOfBusiness: (document.getElementById('natureOfBusiness')?.value || '').trim(),
+            businessLocation: (document.getElementById('businessLocation')?.value || '').trim(),
+            idNumber: (document.getElementById('idNumber')?.value || '').trim()
           };
           setLoanInputs(payload);
           const resp = await loanService.calculateLoan(payload);
@@ -475,7 +505,11 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
       overdraftLimit: getElValue('overdraftLimit'),
       productType: loanType,
       incomeSourceType: incomeSource,
-      preferredLoanTenorYears: parseInt((document.getElementById('loanTenor')?.value || '1').toString().trim(), 10) || 1
+      preferredLoanTenorYears: parseInt((document.getElementById('loanTenor')?.value || '1').toString().trim(), 10) || 1,
+      employerName: (document.getElementById('employerNameHidden')?.value || '').trim(),
+      natureOfBusiness: (document.getElementById('natureOfBusiness')?.value || '').trim(),
+      businessLocation: (document.getElementById('businessLocation')?.value || '').trim(),
+      idNumber: (document.getElementById('idNumber')?.value || '').trim()
     };
     setLoanInputs(payload);
 
@@ -496,6 +530,10 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
   useEffect(() => {
     const salaryEl = document.getElementById('salaryIncome');
     const businessEl = document.getElementById('businessIncome');
+    const employerNameDropdownEl = document.getElementById('employerNameDropdown');
+    const employerNameInputEl = document.getElementById('employerNameInput');
+    const natureOfBusinessEl = document.getElementById('natureOfBusiness');
+    const businessLocationEl = document.getElementById('businessLocation');
     // When switching income source clear related inputs and reset calculation state
     setCalculated(false);
     setHasResults(false);
@@ -507,9 +545,21 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
 
     if (incomeSource === 'employed') {
       if (businessEl) businessEl.value = '';
+      if (natureOfBusinessEl) natureOfBusinessEl.value = '';
+      if (businessLocationEl) businessLocationEl.value = '';
+      // Reset employer selection
+      if (employerNameDropdownEl) employerNameDropdownEl.value = '';
+      if (employerNameInputEl) employerNameInputEl.value = '';
+      setEmployerSelectionMode('scheme');
+      setEmployerOtherInput('');
     }
     if (incomeSource === 'business') {
       if (salaryEl) salaryEl.value = '';
+      if (employerNameDropdownEl) employerNameDropdownEl.value = '';
+      if (employerNameInputEl) employerNameInputEl.value = '';
+      setEmployerSelectionMode('scheme');
+      setEmployerOtherInput('');
+      setIdNumber('');
     }
 
     // Clear displayed results when switching
@@ -523,6 +573,23 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
       statusBadge.style.color = '#5d7e96';
     }
   }, [incomeSource, loanType]);
+
+  // Update hidden employer name input whenever employer selection changes
+  useEffect(() => {
+    const hiddenEmployerInput = document.getElementById('employerNameHidden');
+    if (hiddenEmployerInput) {
+      if (employerSelectionMode === 'other') {
+        hiddenEmployerInput.value = employerOtherInput;
+      } else {
+        const dropdownEl = document.getElementById('employerNameDropdown');
+        if (dropdownEl && dropdownEl.value && dropdownEl.value !== 'OTHER') {
+          hiddenEmployerInput.value = dropdownEl.value;
+        } else {
+          hiddenEmployerInput.value = '';
+        }
+      }
+    }
+  }, [employerSelectionMode, employerOtherInput]);
 
   // Render the exact HTML + CSS provided by the user (converted to JSX)
   return (
@@ -882,17 +949,109 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
                       <div className="input-wrapper">
                         <input type="number" id="salaryIncome" className="input-field" placeholder="e.g., 4500" step="100" autoComplete="off" />
                       </div>
+                      <div className="input-section">
+                        <div className="label-row">
+                          <span className="field-label">🏢 Employer Name</span>
+                          <span className="badge-hint">Your current employer</span>
+                        </div>
+                        <select 
+                          id="employerNameDropdown" 
+                          className="input-field"
+                          value={employerSelectionMode === 'other' ? 'OTHER' : (employerSelectionMode === 'scheme' && employerOtherInput ? employerOtherInput : '')}
+                          onChange={(e) => {
+                            if (e.target.value === 'OTHER') {
+                              setEmployerSelectionMode('other');
+                              setEmployerOtherInput('');
+                            } else {
+                              setEmployerSelectionMode('scheme');
+                              setEmployerOtherInput(e.target.value);
+                            }
+                          }}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <option value="">-- Select your employer --</option>
+                          {SCHEME_COMPANIES.length > 0 ? (
+                            <>
+                              {SCHEME_COMPANIES.map((company) => (
+                                <option key={company} value={company}>
+                                  {company}
+                                </option>
+                              ))}
+                              <option value="OTHER">Others (Please specify below)</option>
+                            </>
+                          ) : (
+                            <option value="OTHER">Others (Please specify below)</option>
+                          )}
+                        </select>
+                        {employerSelectionMode === 'other' && (
+                          <input 
+                            type="text" 
+                            id="employerName" 
+                            className="input-field" 
+                            placeholder="e.g., NCBA Group PLC" 
+                            autoComplete="off"
+                            value={employerOtherInput}
+                            onChange={(e) => setEmployerOtherInput(e.target.value)}
+                            style={{ marginTop: '0.8rem' }}
+                          />
+                        )}
+                        {/* Hidden input to store final employer name for submission */}
+                        <input type="hidden" id="employerNameHidden" value="" />
+                      </div>
+                      <div className="input-section">
+                        <div className="label-row">
+                          <span className="field-label">🆔 ID Number</span>
+                          <span className="badge-hint">For credit score verification</span>
+                        </div>
+                        <input 
+                          type="text" 
+                          id="idNumber" 
+                          className="input-field" 
+                          placeholder="e.g., 12345678" 
+                          autoComplete="off"
+                          value={idNumber}
+                          onChange={(e) => setIdNumber(e.target.value)}
+                        />
+                      </div>
                     </>
                   )}
               </div>
                 {incomeSource === 'business' && (
-                  <div className="input-section">
-                    <div className="label-row">
-                      <span className="field-label">📊 Monthly Business Income</span>
-                      <span className="badge-hint">50% profit margin used for affordability</span>
+                  <>
+                    <div className="input-section">
+                      <div className="label-row">
+                        <span className="field-label">📊 Monthly Business Income</span>
+                        <span className="badge-hint">50% profit margin used for affordability</span>
+                      </div>
+                      <input type="number" id="businessIncome" className="input-field" placeholder="e.g., 2200" step="100" autoComplete="off" />
                     </div>
-                    <input type="number" id="businessIncome" className="input-field" placeholder="e.g., 2200" step="100" autoComplete="off" />
-                  </div>
+                    <div className="input-section">
+                      <div className="label-row">
+                        <span className="field-label">🏭 Nature of Business</span>
+                        <span className="badge-hint">Type of business you operate</span>
+                      </div>
+                      <input type="text" id="natureOfBusiness" className="input-field" placeholder="e.g., Retail, Consultancy, Manufacturing" autoComplete="off" />
+                    </div>
+                    <div className="input-section">
+                      <div className="label-row">
+                        <span className="field-label">📍 Business Location</span>
+                        <span className="badge-hint">Where your business is based</span>
+                      </div>
+                      <input 
+                        type="text" 
+                        id="businessLocation" 
+                        className="input-field" 
+                        placeholder="e.g., Nairobi" 
+                        autoComplete="off" 
+                        list="townsList"
+                      />
+                      <datalist id="townsList">
+                        {KENYAN_TOWNS.map((town) => (
+                          <option key={town} value={town} />
+                        ))}
+                      </datalist>
+                    </div>
+                  </>
                 )}
 
               <hr />
