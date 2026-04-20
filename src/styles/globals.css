@@ -12,9 +12,9 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  body {
+  /* body {
     overflow-x: hidden;
-  }
+  } */
 
   img,
   canvas,
@@ -47,7 +47,7 @@
     }
   }
   
-  /* Unified input styling */
+  Unified input styling
   input[type="text"],
   input[type="password"],
   input[placeholder] {

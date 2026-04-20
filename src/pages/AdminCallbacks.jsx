@@ -190,9 +190,25 @@ export default function AdminCallbacks() {
     maximumLoanAmount: 'Maximum Loan Amount',
     estimatedMonthlyRepayment: 'Estimated Monthly Repayment',
     appliedInterestRate: 'Applied Interest Rate',
+    appliedStressTestRate: 'Applied Stress Test Rate',
     loanTenorMonths: 'Loan Tenor (months)',
+    adjustedIncome: 'Adjusted Income',
+    stressTestedRepayment: 'Stress-Tested Repayment',
     netMonthlyIncome: 'Net Monthly Income',
-    monthlyTurnover: 'Monthly Turnover'
+    monthlyTurnover: 'Monthly Turnover',
+    availableEMI: 'Available EMI',
+    dbrCap40Percent: 'DBR Cap',
+    dbrUsedPercent: 'DBR Used',
+    cappingApplied: 'Capping Applied',
+    calculatedLoanBeforeCap: 'Calculated Loan Before Cap',
+    qualifies: 'Qualifies',
+    productType: 'Product Type',
+    incomeSourceType: 'Income Source Type',
+    employerName: 'Employer Name',
+    natureOfBusiness: 'Nature of Business',
+    businessLocation: 'Business Location',
+    idNumber: 'ID Number',
+    message: 'Message'
   };
 
   const formatAmount = (val) => {
@@ -200,6 +216,207 @@ export default function AdminCallbacks() {
     const num = Number(val);
     if (!isFinite(num)) return String(val);
     return `KES ${num.toLocaleString()}`;
+  };
+
+  const formatPercent = (val) => {
+    if (val === null || val === undefined || val === '') return '—';
+    const num = Number(val);
+    if (!isFinite(num)) return String(val);
+    return `${num > 0 && num < 1 ? (num * 100).toFixed(2) : num.toFixed(2)}%`;
+  };
+
+  const parseJsonSafe = (jsonStr) => {
+    if (!jsonStr || typeof jsonStr !== 'string') return null;
+    try {
+      return JSON.parse(jsonStr);
+    } catch {
+      return null;
+    }
+  };
+
+  const getNumeric = (value) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
+  };
+
+  const calculateLoanFromEmi = (monthlyPayment, years, annualRatePercent) => {
+    const payment = getNumeric(monthlyPayment);
+    const tenorYears = Math.max(1, parseInt(years, 10) || 1);
+    const annualRate = getNumeric(annualRatePercent);
+    const n = tenorYears * 12;
+    const r = (annualRate / 100) / 12;
+    if (!r) return Math.round(payment * n);
+    const pow = Math.pow(1 + r, n);
+    return Math.round(payment * (pow - 1) / (r * pow));
+  };
+
+  const calculateEmiFromPrincipal = (principal, years, annualRatePercent) => {
+    const amount = getNumeric(principal);
+    const tenorYears = Math.max(1, parseInt(years, 10) || 1);
+    const annualRate = getNumeric(annualRatePercent);
+    const n = tenorYears * 12;
+    const r = (annualRate / 100) / 12;
+    if (!r || !n) return Math.round(n ? amount / n : amount);
+    const pow = Math.pow(1 + r, n);
+    return Math.round(amount * (r * pow) / (pow - 1));
+  };
+
+  const deriveCalculationResult = (item) => {
+    const existingResult = parseJsonSafe(item?.loanResultJson);
+    if (existingResult && typeof existingResult === 'object') return existingResult;
+
+    const inputs = parseJsonSafe(item?.loanInputsJson);
+    if (!inputs || typeof inputs !== 'object') return null;
+
+    const productType = String(inputs.productType || 'affordableHousing').toLowerCase();
+    const incomeSourceType = String(inputs.incomeSourceType || inputs.incomeSource || 'employed').toLowerCase();
+    const tenorYears = Math.max(1, parseInt(inputs.preferredLoanTenorYears || 1, 10) || 1);
+    const monthlySalaryIncome = getNumeric(inputs.monthlySalaryIncome);
+    const monthlyBusinessIncome = getNumeric(inputs.monthlyBusinessIncome);
+    const existingLoanObligations = getNumeric(inputs.existingLoanObligations);
+    const creditCardLimit = getNumeric(inputs.creditCardLimit);
+    const overdraftLimit = getNumeric(inputs.overdraftLimit);
+
+    const cardObligation = creditCardLimit * 0.10;
+    const odObligation = overdraftLimit * 0.05;
+    const totalExistingObligations = Math.round(existingLoanObligations + cardObligation + odObligation);
+    const loanTenorMonths = tenorYears * 12;
+
+    if (productType === 'stdmortgage') {
+      const adjustedIncome = Math.round(monthlySalaryIncome);
+      const dirCap = monthlySalaryIncome * 0.60;
+      const availableEMI = Math.round(dirCap - totalExistingObligations);
+      if (availableEMI <= 0) {
+        return {
+          qualifies: false,
+          message: 'Existing obligations exceed 60% DIR',
+          adjustedIncome,
+          netMonthlyIncome: adjustedIncome,
+          existingObligations: totalExistingObligations,
+          dbrCap40Percent: Math.round(dirCap),
+          availableEMI,
+          appliedInterestRate: 14.02 / 100,
+          loanTenorMonths
+        };
+      }
+
+      return {
+        qualifies: true,
+        maximumLoanAmount: calculateLoanFromEmi(availableEMI, tenorYears, 14.02),
+        estimatedMonthlyRepayment: availableEMI,
+        appliedInterestRate: 14.02 / 100,
+        loanTenorMonths,
+        adjustedIncome,
+        netMonthlyIncome: adjustedIncome,
+        existingObligations: totalExistingObligations,
+        dbrCap40Percent: Math.round(dirCap),
+        availableEMI,
+        dbrUsedPercent: monthlySalaryIncome > 0 ? `${(((totalExistingObligations + availableEMI) / monthlySalaryIncome) * 100).toFixed(1)}%` : '—'
+      };
+    }
+
+    if (incomeSourceType.includes('business')) {
+      const netIncome = Math.round(monthlyBusinessIncome * 0.50);
+      const dbrCap = Math.round(netIncome * 0.40);
+      const availableEMI = Math.round(dbrCap - totalExistingObligations);
+      if (availableEMI <= 0) {
+        return {
+          qualifies: false,
+          message: 'Existing obligations exceed 40% of income',
+          adjustedIncome: netIncome,
+          netMonthlyIncome: netIncome,
+          existingObligations: totalExistingObligations,
+          dbrCap40Percent: dbrCap,
+          availableEMI,
+          loanTenorMonths
+        };
+      }
+
+      const annualRate = monthlyBusinessIncome < 2000000 ? 9.5 : 9.9;
+      const calculatedLoanBeforeCap = calculateLoanFromEmi(availableEMI, tenorYears, annualRate);
+      const cappingApplied = calculatedLoanBeforeCap > 10500000;
+      const maximumLoanAmount = cappingApplied ? 10500000 : calculatedLoanBeforeCap;
+      return {
+        qualifies: true,
+        maximumLoanAmount,
+        estimatedMonthlyRepayment: cappingApplied ? calculateEmiFromPrincipal(maximumLoanAmount, tenorYears, annualRate) : availableEMI,
+        appliedInterestRate: annualRate / 100,
+        loanTenorMonths,
+        adjustedIncome: netIncome,
+        netMonthlyIncome: netIncome,
+        existingObligations: totalExistingObligations,
+        dbrCap40Percent: dbrCap,
+        availableEMI,
+        cappingApplied,
+        calculatedLoanBeforeCap,
+        message: cappingApplied ? 'Loan amount capped to policy maximum of KES 10,500,000' : null
+      };
+    }
+
+    const adjustedIncome = Math.round(monthlySalaryIncome);
+    if (monthlySalaryIncome > 658279.65) {
+      return {
+        qualifies: false,
+        message: 'Net income exceeds maximum allowed of 658,279.65',
+        adjustedIncome,
+        netMonthlyIncome: adjustedIncome,
+        loanTenorMonths
+      };
+    }
+
+    const dirCap = monthlySalaryIncome * 0.60;
+    const availableEMI = Math.round(dirCap - totalExistingObligations);
+    if (availableEMI <= 0) {
+      return {
+        qualifies: false,
+        message: 'Existing obligations exceed 60% DIR',
+        adjustedIncome,
+        netMonthlyIncome: adjustedIncome,
+        existingObligations: totalExistingObligations,
+        dbrCap40Percent: Math.round(dirCap),
+        availableEMI,
+        loanTenorMonths
+      };
+    }
+
+    const annualRate = tenorYears <= 20 ? 9.5 : 9.9;
+    const calculatedLoanBeforeCap = calculateLoanFromEmi(availableEMI, tenorYears, annualRate);
+    const cappingApplied = calculatedLoanBeforeCap > 10500000;
+    const maximumLoanAmount = cappingApplied ? 10500000 : calculatedLoanBeforeCap;
+    return {
+      qualifies: true,
+      maximumLoanAmount,
+      estimatedMonthlyRepayment: cappingApplied ? calculateEmiFromPrincipal(maximumLoanAmount, tenorYears, annualRate) : availableEMI,
+      appliedInterestRate: annualRate / 100,
+      loanTenorMonths,
+      adjustedIncome,
+      netMonthlyIncome: adjustedIncome,
+      existingObligations: totalExistingObligations,
+      dbrCap40Percent: Math.round(dirCap),
+      availableEMI,
+      dbrUsedPercent: monthlySalaryIncome > 0 ? `${(((totalExistingObligations + availableEMI) / monthlySalaryIncome) * 100).toFixed(1)}%` : '—',
+      cappingApplied,
+      calculatedLoanBeforeCap,
+      message: cappingApplied ? 'Loan amount capped to policy maximum of KES 10,500,000' : null
+    };
+  };
+
+  const formatFieldValue = (key, value) => {
+    if (value === null || value === undefined || value === '') return '—';
+    const normalizedKey = String(key || '').toLowerCase();
+    if (/(rate|percent)/i.test(normalizedKey)) return formatPercent(value);
+    if (/(loanrequestid|loanresultid|id$|idnumber)/i.test(normalizedKey)) return String(value);
+    if (normalizedKey.includes('tenor') && !normalizedKey.includes('amount')) {
+      const num = Number(value);
+      return Number.isFinite(num) ? String(num) : String(value);
+    }
+    if (/(dbrcap40percent|availableemi|existingobligations|adjustedincome|netmonthlyincome|stresstestedrepayment|estimatedmonthlyrepayment|maximumloanamount|calculatedloanbeforecap)/i.test(normalizedKey)) {
+      return formatAmount(value);
+    }
+    if (/(qualifies|cappingapplied)/i.test(normalizedKey)) return value ? 'Yes' : 'No';
+    if (/(producttype|incomesourcetype|employername|natureofbusiness|businesslocation|idnumber|message)/i.test(normalizedKey)) return String(value);
+    if (typeof value === 'number') return formatAmount(value);
+    return String(value);
   };
 
   const formatTimestamp = (s) => {
@@ -299,6 +516,18 @@ export default function AdminCallbacks() {
       'loantenormonths',
       'loantenor',
       'appliedinterestrate',
+      'stresstestedrepayment',
+      'appliedstresstestrate',
+      'adjustedincome',
+      'availableemi',
+      'existingobligations',
+      'netmonthlyincome',
+      'dbrcap40percent',
+      'dbrusedpercent',
+      'cappingapplied',
+      'calculatedloanbeforecap',
+      'qualifies',
+      'message',
       'loanresultid',
       'loanresult'
     ]);
@@ -378,7 +607,7 @@ export default function AdminCallbacks() {
     try {
       const obj = item && item.loanInputsJson ? JSON.parse(item.loanInputsJson) : {};
       for (const k of keys) if (obj[k] !== undefined) return obj[k];
-      const res = item && item.loanResultJson ? JSON.parse(item.loanResultJson) : {};
+      const res = deriveCalculationResult(item) || {};
       for (const k of keys) if (res[k] !== undefined) return res[k];
     } catch {
       return null;
@@ -418,6 +647,8 @@ export default function AdminCallbacks() {
 
   const paged = filtered.slice((page-1)*pageSize, page*pageSize);
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const selectedInputs = selected ? parseJsonSafe(selected.loanInputsJson) : null;
+  const selectedCalculationResult = selected ? deriveCalculationResult(selected) : null;
 
   return (
     <div className="dashboard">
@@ -513,7 +744,8 @@ export default function AdminCallbacks() {
             {paged.map((item, idx) => {
               const globalIndex = (page-1)*pageSize + idx;
               const incomeType = deriveIncomeType(item);
-              const amount = getField(item, ['maximumLoanAmount','maximumloanamount','maximumLoan','maximum_loan_amount','qualificationAmount','amount','maxLoan','loanAmount']);
+              const calculation = deriveCalculationResult(item);
+              const amount = calculation?.maximumLoanAmount ?? getField(item, ['maximumLoanAmount','maximumloanamount','maximumLoan','maximum_loan_amount','qualificationAmount','amount','maxLoan','loanAmount']);
               const status = item.isProcessed ? 'contacted' : 'new';
               return (
                 <tr key={item.id} className={`${globalIndex % 2 === 0 ? '' : ''} cursor-pointer`} onClick={() => openDetail(item)}>
@@ -553,11 +785,11 @@ export default function AdminCallbacks() {
               <Card className="detail-modal-card">
                 <h3 className="font-semibold mb-3">Customer Information</h3>
                 <div className="space-y-2 text-sm">
-                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Full Name:</div><div className="flex-1 break-words">{selected.fullName}</div></div>
-                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Phone:</div><div className="flex-1 break-words">{selected.phoneNumber}</div></div>
-                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Email:</div><div className="flex-1 break-words">{selected.email}</div></div>
-                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Referral No:</div><div className="flex-1 break-words">{selected.referralNumber || '—'}</div></div>
-                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Submitted:</div><div className="flex-1 break-words">{formatTimestamp(selected.createdAt)}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Full Name:</div><div className="flex-1 wrap-break-word">{selected.fullName}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Phone:</div><div className="flex-1 wrap-break-word">{selected.phoneNumber}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Email:</div><div className="flex-1 wrap-break-word">{selected.email}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Referral No:</div><div className="flex-1 wrap-break-word">{selected.referralNumber || '—'}</div></div>
+                  <div className="flex flex-col gap-1 sm:flex-row"><div className="w-full sm:w-36 text-gray-600">Submitted:</div><div className="flex-1 wrap-break-word">{formatTimestamp(selected.createdAt)}</div></div>
                   {selected.message && (
                     <div className="mt-3">
                       <div className="w-full text-gray-600">Message:</div>
@@ -570,74 +802,52 @@ export default function AdminCallbacks() {
               <Card className="detail-modal-card">
                 <h3 className="font-semibold mb-3">Calculation Result</h3>
                 <div className="text-sm">
-                  {selected.loanInputsJson && (() => {
-                    try {
-                      const obj = JSON.parse(selected.loanInputsJson);
-                      let incomeType = obj.incomeType || obj.employmentType || obj.income_source || '';
-                      if (!incomeType) {
-                        const s = Number(obj.monthlySalaryIncome || obj.netMonthlyIncome || 0);
-                        const b = Number(obj.monthlyBusinessIncome || obj.monthlyTurnover || 0);
-                        if (s > 0 && b === 0) incomeType = 'employed';
-                        else if (b > 0 && s === 0) incomeType = 'business';
-                      }
-                      const entries = Object.entries(obj).filter(([k]) => keepInputKeyForIncome(k, incomeType));
-                      return (
-                        <div className="mb-3">
-                          <div className="text-gray-700 font-medium mb-1">Loan Inputs</div>
-                          <div className="space-y-2">
-                            {entries.map(([k, v]) => (
-                              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 items-center" key={`in-${k}`}>
-                                <div className="text-sm text-gray-600">{labelMap[k] || k}:</div>
-                                <div className="text-sm font-medium text-gray-800 break-words">{typeof v === 'number' ? formatAmount(v) : (typeof v === 'object' ? JSON.stringify(v) : String(v))}</div>
-                              </div>
-                            ))}
-                            {selected.loanResultJson && (() => {
-                              try {
-                                const res = JSON.parse(selected.loanResultJson);
-                                let apr = res.appliedInterestRate || res.AppliedInterestRate || res.appliedinterestRate || null;
-                                if (apr !== null && apr !== undefined) {
-                                  if (apr > 0 && apr < 1) apr = apr * 100;
-                                  return (
-                                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 items-center mt-2">
-                                      <div className="text-sm text-gray-600">Applied Interest Rate:</div>
-                                      <div className="text-sm font-medium text-gray-800">{String(apr)}%</div>
-                                    </div>
-                                  );
-                                }
-                              } catch { }
-                              return null;
-                            })()}
-                          </div>
+                  {selectedInputs && (() => {
+                    let incomeType = selectedInputs.incomeType || selectedInputs.employmentType || selectedInputs.income_source || selectedInputs.incomeSourceType || '';
+                    if (!incomeType) {
+                      const s = Number(selectedInputs.monthlySalaryIncome || selectedInputs.netMonthlyIncome || 0);
+                      const b = Number(selectedInputs.monthlyBusinessIncome || selectedInputs.monthlyTurnover || 0);
+                      if (s > 0 && b === 0) incomeType = 'employed';
+                      else if (b > 0 && s === 0) incomeType = 'business';
+                    }
+                    const entries = Object.entries(selectedInputs).filter(([k]) => keepInputKeyForIncome(k, incomeType));
+                    return (
+                      <div className="mb-3">
+                        <div className="text-gray-700 font-medium mb-1">Loan Inputs</div>
+                        <div className="space-y-2">
+                          {entries.map(([k, v]) => (
+                            <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 items-center" key={`in-${k}`}>
+                              <div className="text-sm text-gray-600">{labelMap[k] || k}:</div>
+                              <div className="text-sm font-medium text-gray-800 wrap-break-word">{typeof v === 'object' ? JSON.stringify(v) : formatFieldValue(k, v)}</div>
+                            </div>
+                          ))}
                         </div>
-                      );
-                    } catch { return null; }
+                      </div>
+                    );
                   })()}
 
-                  {selected.loanResultJson && (() => {
-                    try {
-                      const obj = JSON.parse(selected.loanResultJson);
-                      const entries = Object.entries(obj).filter(([k]) => keepResultKey(k));
-                      const maxEntry = entries.find(([k]) => k.toLowerCase().includes('maximumloan'));
-                      return (
-                        <div>
-                          <div className="text-gray-700 font-medium mb-1">Loan Result</div>
-                          {maxEntry && (
-                            <div className="mb-3 p-3 bg-white border rounded-md">
-                              <div className="text-sm text-gray-600">{labelMap[maxEntry[0]] || maxEntry[0]}</div>
-                              <div className="text-xl font-bold text-gray-900">{typeof maxEntry[1] === 'number' ? formatAmount(maxEntry[1]) : String(maxEntry[1])}</div>
-                            </div>
-                          )}
-                          <div className="space-y-2">
-                            {entries.map(([k, v]) => (
-                              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 items-center" key={`res-${k}`}>
-                                <div className="text-sm text-gray-600">{labelMap[k] || k}:</div>
-                                <div className="text-sm font-medium text-gray-800 break-words">{typeof v === 'number' ? formatAmount(v) : (typeof v === 'object' ? JSON.stringify(v) : String(v))}</div>
-                              </div>
-                            ))}
+                  {selectedCalculationResult && (() => {
+                    const entries = Object.entries(selectedCalculationResult).filter(([k, v]) => keepResultKey(k) && v !== null && v !== undefined && v !== '');
+                    const maxEntry = entries.find(([k]) => k.toLowerCase().includes('maximumloan'));
+                    return (
+                      <div>
+                        <div className="text-gray-700 font-medium mb-1">Loan Result</div>
+                        {maxEntry && (
+                          <div className="mb-3 p-3 bg-white border rounded-md">
+                            <div className="text-sm text-gray-600">{labelMap[maxEntry[0]] || maxEntry[0]}</div>
+                            <div className="text-xl font-bold text-gray-900">{formatFieldValue(maxEntry[0], maxEntry[1])}</div>
                           </div>
+                        )}
+                        <div className="space-y-2">
+                          {entries.map(([k, v]) => (
+                            <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2 items-center" key={`res-${k}`}>
+                              <div className="text-sm text-gray-600">{labelMap[k] || k}:</div>
+                              <div className="text-sm font-medium text-gray-800 wrap-break-word">{typeof v === 'object' ? JSON.stringify(v) : formatFieldValue(k, v)}</div>
+                            </div>
+                          ))}
                         </div>
-                      );
-                    } catch { return null; }
+                      </div>
+                    );
                   })()}
                 </div>
               </Card>

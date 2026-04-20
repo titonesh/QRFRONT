@@ -278,13 +278,15 @@ import LoanResultsDisplay from '../components/LoanResultsDisplay';
 import CallbackRequestModal from '../components/CallbackRequestModal';
 import SuccessMessage from '../components/SuccessMessage';
 import Button from '../components/Button';
+import StandardMortgageImage from '../assets/images/111.png';
+import AffordableHousingImage from '../assets/images/123.png';
 
 const MORTGAGE_PRODUCTS = [
   {
     id: 'ahf',
     label: 'Affordable Housing Mortgage (AHF)',
     shortLabel: 'AHF',
-    image: '/assets/AHF.png',
+    image: AffordableHousingImage,
     description: '9.5% rate for 20 years financing.',
     audience: '9.9% rate for 25 years financing.',
     highlights: []
@@ -293,7 +295,7 @@ const MORTGAGE_PRODUCTS = [
     id: 'standard',
     label: 'Standard Mortgage',
     shortLabel: 'Standard Mortgage',
-    image: '/assets/standard%20mortgage.png',
+    image: StandardMortgageImage,
     description: 'Get a mortgage with competitive rates and flexible terms.',
     audience: '14.02% rate for 25 years financing.',
     highlights: ['']
@@ -367,10 +369,10 @@ export const CalculatorPage = ({ onBackHome }) => {
                 <div className="w-full max-w-5xl">
                   {!selectedProduct ? (
                     <div className="overflow-hidden rounded-[2rem] sm:rounded-4xl border border-slate-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
-                      <div className="border-b border-slate-100 bg-slate-50/50 px-4 py-6 sm:px-8 sm:py-10">
-                        <div className="max-w-2xl text-center mx-auto">
-                          <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-3xl">Select mortgage product</h2>
-                          <p className="mt-3 text-sm text-slate-500 sm:text-base">
+                      <div className="border-b border-slate-100 bg-white px-6 py-8 sm:px-8 sm:py-12 lg:py-16">
+                        <div className="max-w-3xl mx-auto">
+                          <h2 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">Select mortgage product</h2>
+                          <p className="mt-4 text-base text-slate-700 sm:text-lg lg:max-w-2xl">
                             Choose a product type to begin your prequalification.
                           </p>
                         </div>

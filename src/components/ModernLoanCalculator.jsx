@@ -466,7 +466,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
         delete calcButton._onClick;
       }
     };
-  }, [incomeSource, loanType, calculated]);
+  }, [incomeSource, loanType]);
 
   useEffect(() => {
     const handler = (ev) => {
@@ -943,15 +943,15 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
                   {incomeSource === 'employed' && (
                     <>
                       <div className="label-row">
-                        <span className="field-label">💰 Monthly Salary Income</span>
-                        <span className="badge-hint">60% can be used for affordability</span>
+                        <span className="field-label">Monthly Salary Income</span>
+                        <span className="badge-hint"></span>
                       </div>
                       <div className="input-wrapper">
                         <input type="number" id="salaryIncome" className="input-field" placeholder="e.g., 4500" step="100" autoComplete="off" />
                       </div>
                       <div className="input-section">
                         <div className="label-row">
-                          <span className="field-label">🏢 Employer Name</span>
+                          <span className="field-label">Employer Name</span>
                           <span className="badge-hint">Your current employer</span>
                         </div>
                         <select 
@@ -1000,8 +1000,8 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
                       </div>
                       <div className="input-section">
                         <div className="label-row">
-                          <span className="field-label">🆔 ID Number</span>
-                          <span className="badge-hint">For credit score verification</span>
+                          <span className="field-label">ID Number</span>
+                          <span className="badge-hint"></span>
                         </div>
                         <input 
                           type="text" 
@@ -1020,21 +1020,21 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
                   <>
                     <div className="input-section">
                       <div className="label-row">
-                        <span className="field-label">📊 Monthly Business Income</span>
-                        <span className="badge-hint">50% profit margin used for affordability</span>
+                        <span className="field-label">Monthly Business Income</span>
+                        <span className="badge-hint"></span>
                       </div>
                       <input type="number" id="businessIncome" className="input-field" placeholder="e.g., 2200" step="100" autoComplete="off" />
                     </div>
                     <div className="input-section">
                       <div className="label-row">
-                        <span className="field-label">🏭 Nature of Business</span>
+                        <span className="field-label">Nature of Business</span>
                         <span className="badge-hint">Type of business you operate</span>
                       </div>
                       <input type="text" id="natureOfBusiness" className="input-field" placeholder="e.g., Retail, Consultancy, Manufacturing" autoComplete="off" />
                     </div>
                     <div className="input-section">
                       <div className="label-row">
-                        <span className="field-label">📍 Business Location</span>
+                        <span className="field-label">Business Location</span>
                         <span className="badge-hint">Where your business is based</span>
                       </div>
                       <input 
@@ -1059,23 +1059,23 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
               {/* Rental input removed */}
               <div className="input-section">
                 <div className="label-row">
-                  <span className="field-label">💳 Credit Card Limit</span>
-                  <span className="badge-hint">Used at 10% utilisation for affordability</span>
+                  <span className="field-label">Credit Card Limit</span>
+                  <span className="badge-hint"></span>
                 </div>
                 <input type="number" id="creditCardLimit" className="input-field" placeholder="e.g., 20000" step="100" autoComplete="off" />
               </div>
 
               <div className="input-section">
                 <div className="label-row">
-                  <span className="field-label">💸 Overdraft Limit</span>
-                  <span className="badge-hint">Used at 5% utilisation for affordability</span>
+                  <span className="field-label">Overdraft Limit</span>
+                  <span className="badge-hint"></span>
                 </div>
                 <input type="number" id="overdraftLimit" className="input-field" placeholder="e.g., 5000" step="50" autoComplete="off" />
               </div>
 
               <div className="input-section">
                 <div className="label-row">
-                  <span className="field-label">📉 Existing Monthly Loan Obligations</span>
+                  <span className="field-label">Existing Monthly Loan Obligations</span>
                   <span className="badge-hint">Car loans, credit cards, etc.</span>
                 </div>
                 <input type="number" id="loanObligations" className="input-field" placeholder="e.g., 400" step="50" autoComplete="off" />
@@ -1085,7 +1085,7 @@ export default function ModernLoanCalculator({ selectedProduct, onChangeProduct 
 
               <div className="input-section">
                 <div className="label-row">
-                  <span className="field-label">⏱️ Preferred Loan Tenor (Years)</span>
+                  <span className="field-label">Preferred Loan Tenor (Years)</span>
                   <span className="badge-hint">1–25 years max</span>
                 </div>
                 <input type="number" id="loanTenor" className="input-field" placeholder="e.g., 20" min="1" max="25" step="1" autoComplete="off" />

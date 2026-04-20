@@ -4,7 +4,7 @@ import CalculatorPage from './pages/CalculatorPage';
 import QRCodePage from './pages/QRCodePage';
 import AdminLogin from './pages/AdminLogin';
 import AdminCallbacks from './pages/AdminCallbacks';
-import './styles/globals.css';
+// import './styles/globals.css';
 
 /**
  * Main App Component
